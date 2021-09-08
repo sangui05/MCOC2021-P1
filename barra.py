@@ -2,7 +2,6 @@ import numpy as np
 
 g = 9.81 #kg*m/s^2
 
-
 class Barra(object):
 
 	"""Constructor para una barra"""
@@ -16,8 +15,7 @@ class Barra(object):
 		self.ρ = ρ
 		self.σy = σy
 
-
-   	def obtener_conectividad(self):
+	def obtener_conectividad(self):
 		return [self.ni, self.nj]
 
 	def calcular_area(self):
@@ -42,9 +40,7 @@ class Barra(object):
 		L = self.calcular_largo(reticulado)
 		A = self.calcular_area()
 		return self.ρ * A * L * g
-
-
-
+'''
 
     def obtener_rigidez(self, ret):
         
@@ -90,5 +86,5 @@ class Barra(object):
         """Implementar"""	
         
         return 0
-
+'''
 
