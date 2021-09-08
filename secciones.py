@@ -6,33 +6,30 @@ class Circular(object):
 
     def __init__(self, D, Dint):
         super(Circular, self).__init__()
-        """Implementar"""	
+        self.D
+        self.Dint
 
     def area(self):
         
-        """Implementar"""	
+        A = pi*(self.D**2 - self.Dint**2)/4	
         
-        return 0
+        return A
 
     def peso(self):
 
         
-        """Implementar"""	
+        peso = g_*ρ_acero*self.area()
         
-        return 0
+        return peso
 
     def inercia_xx(self):
 
         
-        """Implementar"""	
+        Ixx = pi * (self.D**2 - self.Dint**2)/4
         
-        return 0
+        return Ixx
 
     def inercia_yy(self):
 
-        
-        """Implementar"""	
-        
-        return 0
-
+        return self.inercia_xx
 
