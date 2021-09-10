@@ -17,7 +17,7 @@ class Barra(object):
 		return [self.ni, self.nj]
 
 	def calcular_area(self):
-		A = seccion.area
+		A = self.seccion.area
 		return A
 
 	def calcular_largo(self, reticulado):
@@ -33,7 +33,7 @@ class Barra(object):
 	def calcular_peso(self, reticulado):
 		
 		L = self.calcular_largo(reticulado)
-		Peso = seccion.peso
+		Peso = self.seccion.peso
 		return Peso * L
 
 
