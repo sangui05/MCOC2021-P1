@@ -1,53 +1,67 @@
 import numpy as np
 from scipy.linalg import solve
-
+from barra import Barra
+#bar = Barra()
 class Reticulado(object):
     """Define un reticulado"""
     __NNodosInit__ = 100
 
+    #constructor
     def __init__(self):
         super(Reticulado, self).__init__()
         
+        print("Constructor de Reticulado")
         
-        """Implementar"""	
+        self.xyz = np.zeros((Reticulado.__NNodosInit__,3), dtype=np.double)
+        self.Nnodos = 0
+        self.barras = []
+        self.cargas = {}
+        self.restricciones = {}
+        
         
 
 
     def agregar_nodo(self, x, y, z=0):
         
-        """Implementar"""	
+        
+
+        print(f"Quiero agregar un nodo en ({x} {y} {z})")
+        numero_de_nodo_actual = self.Nnodos
+
+        self.xyz[numero_de_nodo_actual,:] = [x, y, z]
+
+        self.Nnodos += 1
         
         return 0
 
     def agregar_barra(self, barra):
         
-        """Implementar"""	
+        self.barras.append(barra)        
         
         return 0
 
     def obtener_coordenada_nodal(self, n):
         
-        """Implementar"""	
+        corn = self.xyz[n,:]
         
-        return 0
-
+        
+        print(f"la posicion del nodo {n} es en las cordenadas =  {corn}")
+        return corn
     def calcular_peso_total(self):
+        pesototalbarras = 0
+        for barra in barras:
+            w_barra= self.barras.calcular_peso(barra)
+            pesototalbarras+= w_barra
         
-        """Implementar"""	
-        
-        return 0
+        return pesototalbarras
 
     def obtener_nodos(self):
         
-        """Implementar"""	
-        
-        return 0
+        return self.xyz
 
     def obtener_barras(self):
         
-        """Implementar"""	
-        
-        return 0
+        return self.barras
 
 
 
@@ -120,4 +134,21 @@ class Reticulado(object):
 
     def __str__(self):
 
-        return "Soy un reticulado :)"
+        s = "Soy un reticulado :)"
+        s += "\n"
+        s += "Nodos: \n "
+        for i in range(Nnodos):
+            
+            s+=f"{i} :"
+            s+=str(self.xyz[i]) 
+            s += "\n"
+        s += "Barras: \n "
+        for j in range(len(barras)):
+            
+            s+=f"{j} :"
+            s+=str(self.barras[j]) 
+            s += "\n"
+        
+        #s += str(self.xyz[0 : self.Nnodos,:]) #ejemplo del profe
+
+        return s
