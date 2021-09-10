@@ -17,6 +17,11 @@ ret.agregar_nodo(2*L,0)
 ret.agregar_nodo(L/2,sqrt(3)/L)
 ret.agregar_nodo(3*L/2,sqrt(3)/L)
 
+#LA SIGUIENTE LINEA ES LINEA DE PRUEBA de funcion obtener_coordenada_nodal
+ret.obtener_coordenada_nodal(1)
+#PRUEBA REALIZADA Y EXITOSA 
+
+
 #Secciones de las barras
 circular_200_4 = Circular(200*mm_, 4*mm_)
 circular_200_8 = Circular(200*mm_, 8*mm_)

@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.linalg import solve
-
+from barra import Barra
+#bar = Barra()
 class Reticulado(object):
     """Define un reticulado"""
     __NNodosInit__ = 100
@@ -16,13 +17,13 @@ class Reticulado(object):
         self.barras = []
         self.cargas = {}
         self.restricciones = {}
-        """Implementar"""	
+        
         
 
 
     def agregar_nodo(self, x, y, z=0):
         
-        """Implementar"""	
+        
 
         print(f"Quiero agregar un nodo en ({x} {y} {z})")
         numero_de_nodo_actual = self.Nnodos
@@ -41,15 +42,18 @@ class Reticulado(object):
 
     def obtener_coordenada_nodal(self, n):
         
-        """Implementar"""	
+        corn = self.xyz[n,:]
         
-        return 0
-
+        
+        print(f"la posicion del nodo {n} es en las cordenadas =  {corn}")
+        return corn
     def calcular_peso_total(self):
+        pesototalbarras = 0
+        for barra in barras:
+            w_barra= self.barras.calcular_peso(barra)
+            pesototalbarras+= w_barra
         
-        """Implementar"""	
-        
-        return 0
+        return pesototalbarras
 
     def obtener_nodos(self):
         
@@ -131,9 +135,20 @@ class Reticulado(object):
     def __str__(self):
 
         s = "Soy un reticulado :)"
-
         s += "\n"
+        s += "Nodos: \n "
+        for i in range(Nnodos):
+            
+            s+=f"{i} :"
+            s+=str(self.xyz[i]) 
+            s += "\n"
+        s += "Barras: \n "
+        for j in range(len(barras)):
+            
+            s+=f"{j} :"
+            s+=str(self.barras[j]) 
+            s += "\n"
         
-        s += str(self.xyz[0 : self.Nnodos,:])
+        #s += str(self.xyz[0 : self.Nnodos,:]) #ejemplo del profe
 
         return s
