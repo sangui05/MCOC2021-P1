@@ -11,7 +11,7 @@ class Barra(object):
 		self.nj = nj
 		self.seccion = seccion
 		self.color   = color
-	
+
 
 	def obtener_conectividad(self):
 		return [self.ni, self.nj]
@@ -31,54 +31,54 @@ class Barra(object):
 		return np.sqrt(np.dot(dij,dij))
 
 	def calcular_peso(self, reticulado):
-		
+
 		L = self.calcular_largo(reticulado)
 		Peso = self.seccion.peso
 		return Peso * L
 
 
-    def obtener_rigidez(self, ret):
-        
-        """Implementar"""	
-        
-        return 0
+def obtener_rigidez(self, ret):
 
-    def obtener_vector_de_cargas(self, ret):
-        
-        """Implementar"""	
-        
-        return 0
+	"""Implementar"""
 
+	return 0
 
-    def obtener_fuerza(self, ret):
-        
-        """Implementar"""	
-        
-        return 0
+def obtener_vector_de_cargas(self, ret):
+
+	"""Implementar"""
+
+	return 0
 
 
+def obtener_fuerza(self, ret):
 
+	"""Implementar"""
 
-    def chequear_diseño(self, Fu, ret, ϕ=0.9):
-        
-        """Implementar"""	
-        
-        return 0
+	return 0
 
 
 
 
+def chequear_diseño(self, Fu, ret, ϕ=0.9):
 
-    def obtener_factor_utilizacion(self, Fu, ϕ=0.9):
-        
-        """Implementar"""	
-        
-        return 0
+	"""Implementar"""
+
+	return 0
 
 
-    def rediseñar(self, Fu, ret, ϕ=0.9):
-        
-        """Implementar"""	
-        
-        return 0
+
+
+
+def obtener_factor_utilizacion(self, Fu, ϕ=0.9):
+
+	"""Implementar"""
+
+	return 0
+
+
+def rediseñar(self, Fu, ret, ϕ=0.9):
+
+	"""Implementar"""
+
+	return 0
 
