@@ -1,6 +1,9 @@
 import numpy as np
 from scipy.linalg import solve
 from barra import Barra
+import numpy as np
+from scipy.linalg import solve
+from barra import Barra
 #bar = Barra()
 class Reticulado(object):
     """Define un reticulado"""
@@ -49,8 +52,8 @@ class Reticulado(object):
         return corn
     def calcular_peso_total(self):
         pesototalbarras = 0
-        for barra in barras:
-            w_barra= self.barras.calcular_peso(barra)
+        for barra in self.barras:
+            w_barra= barra.calcular_peso()
             pesototalbarras+= w_barra
         
         return pesototalbarras
@@ -150,3 +153,4 @@ class Reticulado(object):
             h += 1
 
         return s
+
