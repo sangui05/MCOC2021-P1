@@ -28,20 +28,28 @@ class Barra(object):
 
         xi = reticulado.xyz[ni,:]
         xj = reticulado.xyz[nj,:]
-
+        l = np.linalg.norm((xj-xi)) #definiendo el largo mediante la norma de el vector formado por la resta de arrays de las cordenajas del nodo i e j
         print(f"Barra {ni} a {nj} xi = {xi} xj = {xj}")
+        print(f"El largo de la barra {ni} a {nj} xi = {xi} xj = {xj} es de {l} ")
 
-        return 0
+        return l
 
     def calcular_peso(self, reticulado):
-        """Devuelve el largo de la barra. 
+        """Devuelve el peso de la barra. 
         xi : Arreglo numpy de dimenson (3,) con coordenadas del nodo i
         xj : Arreglo numpy de dimenson (3,) con coordenadas del nodo j
         """
+        ni = self.ni
+        nj = self.nj
+
+        xi = reticulado.xyz[ni,:]
+        xj = reticulado.xyz[nj,:]
+        l = np.linalg.norm((xj-xi)) #IMPORTANTE QUE ESTE LARGO ESTE EN METROS. ρ_acero :[kg/m**3]
+        wbarra = ρ_acero*l
         
-        """Implementar"""	
+        print(f"El peso de la barra {ni} a {nj} xi = {xi} xj = {xj} es de {wbarra} ")
         
-        return 0
+        return wbarra
 
 
 
