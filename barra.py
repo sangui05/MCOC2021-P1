@@ -33,7 +33,7 @@ class Barra(object):
 	def calcular_peso(self, reticulado):
 
 		L = self.calcular_largo(reticulado)
-		Peso = self.seccion.peso
+		Peso = self.seccion.peso()
 		return Peso * L
 
 

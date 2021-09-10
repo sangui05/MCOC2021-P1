@@ -48,7 +48,7 @@ class Reticulado(object):
         corn = self.xyz[n,:]
         
         
-        print(f"la posicion del nodo {n} es en las cordenadas =  {corn}")
+        #print(f"la posicion del nodo {n} es en las cordenadas =  {corn}")
         return corn
     def calcular_peso_total(self):
         pesototalbarras = 0
