@@ -3,6 +3,7 @@ from constantes import g_, ρ_acero, E_acero
 
 
 class Barra(object):
+class Barra(object):
 
 	"""Constructor para una barra"""
 	def __init__(self, ni, nj, seccion,color=np.random.rand(3)):
@@ -10,7 +11,8 @@ class Barra(object):
 		self.ni = ni
 		self.nj = nj
 		self.seccion = seccion
-		self.color = color
+		self.color   = color
+	
 
 	def obtener_conectividad(self):
 		return [self.ni, self.nj]
