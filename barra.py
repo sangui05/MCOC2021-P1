@@ -1,3 +1,4 @@
+
 import numpy as np
 
 from constantes import g_, ρ_acero, E_acero
@@ -98,5 +99,4 @@ class Barra(object):
         """Implementar"""	
         
         return 0
-
 
