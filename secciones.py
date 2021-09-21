@@ -92,4 +92,4 @@ class SeccionICHA(object):
         return inercia_yy
 
     def __str__(self):
-        return f"Seccion ICHA {self.denominacion}, area {self.area()}"
+        return f"Seccion ICHA {self.denominacion}, area {self.area()}, inercia xx {self.inercia_xx()}, inercia yy {self.inercia_yy()}"
