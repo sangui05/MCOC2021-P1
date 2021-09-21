@@ -1,6 +1,7 @@
 from numpy import pi, sqrt, nan
 from numpy.random import rand
 from constantes import g_, ρ_acero, mm_
+import pandas as pd
  
 class Circular(object):
     """define una seccion Circular"""
@@ -40,16 +41,20 @@ class SeccionICHA(object):
         super(SeccionICHA, self).__init__()
         self.denominacion = denominacion
         self.color = color  #color para la seccion
-        palabras = []
-        palabra = ''
+        str = ''
         for i in self.denominacion:
             if i == 'H':
-                j = self.denominacion.index(i) +1
-                if self.denominacion[j] == 'R':
-                    self.base_datos = pd.read_excel(base_datos,sheet_name='HR', header=None)
-                else:
-                    self.base_datos = pd.read_excel(base_datos, sheet_name='H', header=None)
+                self.base_datos = pd.read_excel(base_datos, sheet_name='H', header=None)
+                str = self.denominacion[1:]
                 continue
+
+            if i == 'R':
+                self.base_datos = pd.read_excel(base_datos, sheet_name='HR', header=None)
+                str = self.denominacion[2:]
+
+        palabras = []
+        palabra = ''
+        for i in str:
 
             if i == 'x':
                 palabras.append(float(palabra))
@@ -59,6 +64,8 @@ class SeccionICHA(object):
                 palabra += i
 
         palabras.append(float(palabra))
+        print(palabras)
+
 
 
 
