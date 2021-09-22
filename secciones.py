@@ -12,10 +12,11 @@ class Circular(object):
         self.color = color  #color para la seccion
 
     def area(self):
+        print (pi*(self.D**2 - self.Dint**2)/4)
         return pi*(self.D**2 - self.Dint**2)/4
 
     def peso(self):
-        return self.area()*ρ_acero*g
+        return self.area()*ρ_acero*g_
 
     def inercia_xx(self):
         return pi*(self.D**4 - self.Dint**4)/4
@@ -35,7 +36,7 @@ class Circular(object):
 
 class SeccionICHA(object):
     """Lee la tabla ICHA y genera una seccion apropiada"""
-
+#    pd.read_excel()
     def __init__(self, denominacion, base_datos="Perfiles ICHA.xlsx", debug=False, color=rand(3)):
         super(SeccionICHA, self).__init__()
         self.denominacion = denominacion

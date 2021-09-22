@@ -1,3 +1,5 @@
+from scipy.linalg import solve
+from barra import Barra
 import numpy as np
 from scipy.linalg import solve
 from barra import Barra
@@ -45,12 +47,12 @@ class Reticulado(object):
         corn = self.xyz[n,:]
         
         
-        print(f"la posicion del nodo {n} es en las cordenadas =  {corn}")
+        #print(f"la posicion del nodo {n} es en las cordenadas =  {corn}")
         return corn
     def calcular_peso_total(self):
         pesototalbarras = 0
-        for barra in barras:
-            w_barra= self.barras.calcular_peso(barra)
+        for barra in self.barras:
+            w_barra= barra.calcular_peso(self)
             pesototalbarras+= w_barra
         
         return pesototalbarras
@@ -66,22 +68,81 @@ class Reticulado(object):
 
 
     def agregar_restriccion(self, nodo, gdl, valor=0.0):
+        print(f"Quiero agregar una restriccion en: ({nodo} {gdl} {valor})")
         
-        """Implementar"""	
+        if self.restricciones[nodo].index(nodo) == ValueError: #Si el nodo no está en las restricciones, se agrega
+            
+            self.restricciones[nodo] = []
+            self.restricciones[nodo].append(gdl, valor)
+            return 0
+        else :
+            self.restricciones[nodo].append(gdl, valor)
+            return 0
         
+       # print (restricciones)
+        
+
         return 0
 
     def agregar_fuerza(self, nodo, gdl, valor):
         
-        """Implementar"""	
+        print(f"Quiero agregar una fuerza en: ({nodo} {gdl} {valor})")
+
+        if self.cargas.index(nodo) == ValueError : #Si no existe el nodo, se agrega.
+            
+            self.cargas[nodo] = []
+            self.cargas[nodo].append(gdl, valor)
+            return 0
+        else:
+                    
+            self.cargas[nodo].append(gdl, valor)
+            return 0
         
-        return 0
+            #print (cargas)
+        
+        
+       
 
 
     def ensamblar_sistema(self):
         
-        """Implementar"""	
-        
+        for e in self.barras: #recore las barras #barras tiene [N°barra | ni | nj]
+            ni = self.barras[1] 
+            nj = self.barras[2]
+            
+            ke = e.obtener_rigidez()
+            fe = e.obtener_vector_de_carga()
+            
+            d = [3*ni,3*ni+1, 3*ni+2,3*nj,3*nj+1,3*nj+2]
+            
+            for i in range(6):
+                p = d[i]
+                for j in range(6):
+                    q = d[j]
+                    K[p,q] += k_e[i,j]
+                f[p] += f_e[i]
+            
+            #agregar cargas puntuales
+            
+            for nodo in cargas:
+                    print(nodo)
+                    Ncargas = len(cargas[nodo])
+                    print(Ncargas)
+                    
+                    for carga in range :
+                        
+                        gdl = cargas[nodo][0]
+                        f = cargas[nodo][1]
+                        print(f"Agregando carga de {f} en GDL {gdl}")
+                        
+                        gdl_global = 3*node + gdl
+                        F[gdl_global] += f
+           # 
+           #
+           #
+           
+           #self.K #matriz rigidez
+           #self.u # grados de libertad
         return 0
 
 
@@ -89,6 +150,22 @@ class Reticulado(object):
     def resolver_sistema(self):
         
         """Implementar"""	
+        # A DEFININIR
+        
+        #self.Ff
+        #self.Fc
+        #self.Kcc
+        #self.Kff
+        #self.Kfc
+        #self.Kcf
+        
+        #self.u
+        #self.uf
+        #self.uc
+        
+        #self.R REACCIONES
+        
+        #para graficar ret.u
         
         return 0
 
@@ -134,21 +211,20 @@ class Reticulado(object):
 
     def __str__(self):
 
-        s = "Soy un reticulado :)"
-        s += "\n"
-        s += "Nodos: \n "
-        for i in range(Nnodos):
-            
-            s+=f"{i} :"
-            s+=str(self.xyz[i]) 
-            s += "\n"
-        s += "Barras: \n "
-        for j in range(len(barras)):
-            
-            s+=f"{j} :"
-            s+=str(self.barras[j]) 
-            s += "\n"
-        
-        #s += str(self.xyz[0 : self.Nnodos,:]) #ejemplo del profe
+        s = "Soy un reticulado :) \n"
+
+        s += "Nodos: \n"
+
+        for i in range(self.Nnodos):
+            s += f"{i} : ({self.xyz[i][0]}, {self.xyz[i][1]}, {self.xyz[i][2]})\n"
+            i += 1
+
+        s += "Barras: \n"
+
+        h = 0
+        for i in self.barras:
+            s += f"{h} : [{self.barras[h].ni} {self.barras[h].nj}]\n"
+            h += 1
 
         return s
+
