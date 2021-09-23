@@ -54,5 +54,8 @@ class SeccionICHA(object):
     def inercia_yy(self):
         return 0
 
+    def nombre(self):
+        return self.denominacion
+
     def __str__(self):
         return f"Seccion ICHA {self.denominacion}"
