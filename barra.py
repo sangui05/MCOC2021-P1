@@ -11,7 +11,7 @@ class Barra(object):
 		self.nj = nj
 		self.seccion = seccion
 		self.color   = color
-
+	
 
 	def obtener_conectividad(self):
 		return [self.ni, self.nj]
@@ -31,10 +31,9 @@ class Barra(object):
 		return np.sqrt(np.dot(dij,dij))
 
 	def calcular_peso(self, reticulado):
-
+		
 		L = self.calcular_largo(reticulado)
 		Peso = self.seccion.peso()
-
 		print(Peso)
 		return Peso * L
 
@@ -53,24 +52,13 @@ class Barra(object):
 		Tθ = np.array([ -cosθx, -cosθy, -cosθz, cosθx, cosθy, cosθz ]).reshape((6,1))
 
 		return E_acero * A / L * (Tθ @ Tθ.T )
-
-    def obtener_vector_de_cargas(self, ret):
+	def obtener_vector_de_cargas(self, ret):
         
 		W = self.calcular_peso(ret)
 
 		return np.array([0, 0, -W, 0, 0, -W])
-
-
-
-
-
-def chequear_diseño(self, Fu, ret, ϕ=0.9):
-
-
-	"""Implementar"""
-
-
-    def obtener_fuerza(self, ret):
+	
+	def obtener_fuerza(self, ret):
 		ue = np.zeros(6)
 		ue[0:3] = ret.obtener_desplazamiento_nodal(self.ni)
 		ue[3:] = ret.obtener_desplazamiento_nodal(self.nj)
@@ -90,13 +78,22 @@ def chequear_diseño(self, Fu, ret, ϕ=0.9):
 		return E_acero * A / L * (Tθ.T @ ue)
 
 
+'''
+    def chequear_diseño(self, Fu, ret, ϕ=0.9):
+        
+        """Implementar"""	
+        
+        return 0
 
 
-def obtener_factor_utilizacion(self, Fu, ϕ=0.9):
 
-	"""Implementar"""
 
-	return 0
+
+    def obtener_factor_utilizacion(self, Fu, ϕ=0.9):
+        
+        """Implementar"""	
+        
+        return 0
 
 
     def rediseñar(self, Fu, ret, ϕ=0.9):
@@ -104,4 +101,5 @@ def obtener_factor_utilizacion(self, Fu, ϕ=0.9):
         """Implementar"""	
         
         return 0
+'''
 
