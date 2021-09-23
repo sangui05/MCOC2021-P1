@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Sep 20 11:00:12 2021
-
-@author: Sangui
-"""
-
 from reticulado import Reticulado
 from barra import Barra
 from graficar3d import ver_reticulado_3d
@@ -50,10 +43,10 @@ ret.agregar_barra(Barra(4, 7, circular_200_8)) #12
 ret.agregar_barra(Barra(0, 5, circular_200_4)) #13
 ret.agregar_barra(Barra(1, 6, circular_200_4)) #14
 ret.agregar_barra(Barra(2, 7, circular_200_4)) #15
-ret.agregar_barra(Barra(0, 6, circular_200_4)) #16
-ret.agregar_barra(Barra(1, 5, circular_200_4)) #17
-ret.agregar_barra(Barra(6, 2, circular_200_4)) #18
-ret.agregar_barra(Barra(1, 7, circular_200_4)) #19
+ret.agregar_barra(Barra(0, 6, circular_200_4)) #15
+ret.agregar_barra(Barra(1, 5, circular_200_4)) #15
+ret.agregar_barra(Barra(6, 2, circular_200_4)) #15
+ret.agregar_barra(Barra(1, 7, circular_200_4)) #15
 
 
 
@@ -67,7 +60,6 @@ for nodo in [0,5]:
 for nodo in [2,7]:
 	ret.agregar_restriccion(nodo, 1, 0)
 	ret.agregar_restriccion(nodo, 2, 0)
-    
 
 
 #Cargar el nodo 4 en la direccion 1 (Y)
@@ -86,15 +78,7 @@ ver_reticulado_3d(ret,opciones_barras=opciones_barras)
 #Resolver el problema
 ret.ensamblar_sistema(factor_peso_propio=[0.,0.,-1.])
 ret.resolver_sistema()
-#f = ret.obtener_fuerzas()
-
-import numpy.linalg as lin
-
-lbmda, phi = lin.eigh(ret.Kff)
-
-print(f"valores propios = {lbmda}")
-
-phithetha = phi[:,0]
+f = ret.obtener_fuerzas()
 
 #Ver todo el reticulado en texto
 print(ret)

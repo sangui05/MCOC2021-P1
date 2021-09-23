@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Sep 20 10:59:37 2021
-
-@author: Sangui
-"""
 from reticulado import Reticulado
 from barra import Barra
 from graficar3d import ver_reticulado_3d

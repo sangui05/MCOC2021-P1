@@ -1,3 +1,4 @@
+
 from scipy.linalg import solve
 from barra import Barra
 import numpy as np
@@ -68,42 +69,42 @@ class Reticulado(object):
 
 
     def agregar_restriccion(self, nodo, gdl, valor=0.0):
-        print(f"Quiero agregar una restriccion en: ({nodo} {gdl} {valor})")
+        print(f"Agregando una restriccion en: ({nodo} {gdl} {valor})")
         
-        if self.restricciones[nodo].index(nodo) == ValueError: #Si el nodo no está en las restricciones, se agrega
+        if nodo in self.restricciones:  #Si el nodo no está en las restricciones, se agrega
             
             self.restricciones[nodo] = []
-            self.restricciones[nodo].append(gdl, valor)
+            self.restricciones[nodo].append([gdl, valor])
             return 0
         else :
-            self.restricciones[nodo].append(gdl, valor)
+            self.restricciones[nodo] = ([gdl, valor])
             return 0
         
-       # print (restricciones)
+        #print (restricciones)
         
 
         return 0
 
     def agregar_fuerza(self, nodo, gdl, valor):
         
-        print(f"Quiero agregar una fuerza en: ({nodo} {gdl} {valor})")
+        print(f"Agregando una fuerza en: ({nodo} {gdl} {valor})")
 
-        if self.cargas.index(nodo) == ValueError : #Si no existe el nodo, se agrega.
+        if nodo in self.cargas: #Si no existe el nodo, se agrega.
             
             self.cargas[nodo] = []
-            self.cargas[nodo].append(gdl, valor)
+            self.cargas.append([gdl, valor])
             return 0
         else:
                     
-            self.cargas[nodo].append(gdl, valor)
+            self.cargas[nodo] = ([gdl, valor])
             return 0
         
-            #print (cargas)
+        #print (cargas)
         
-        
+    #Actualizacion de fn agregar_restriccion/fuerza funcionando    
        
 
-
+    #emsamblar sistema parcialmente realizado
     def ensamblar_sistema(self):
         
         for e in self.barras: #recore las barras #barras tiene [N°barra | ni | nj]
@@ -227,4 +228,5 @@ class Reticulado(object):
             h += 1
 
         return s
+
 
