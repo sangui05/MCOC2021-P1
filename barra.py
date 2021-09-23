@@ -4,38 +4,37 @@ from constantes import g_, ρ_acero, E_acero
 
 class Barra(object):
 
-    """Constructor para una barra"""
-    def __init__(self, ni, nj, seccion,color=np.random.rand(3)):
-        super(Barra, self).__init__()
-        self.ni = ni
-        self.nj = nj
-        self.seccion = seccion
-        self.color   = color
 
+	"""Constructor para una barra"""
+	def __init__(self, ni, nj, seccion,color=np.random.rand(3)):
+		super(Barra, self).__init__()
+		self.ni = ni
+		self.nj = nj
+		self.seccion = seccion
+		self.color   = color
+	
 
-    def obtener_conectividad(self):
-        return [self.ni, self.nj]
+	def obtener_conectividad(self):
+		return [self.ni, self.nj]
 
-    def calcular_area(self):
-        A = self.seccion.area
-        return A
+	def calcular_area(self):
+		A = self.seccion.area
+		return A
 
-    def calcular_largo(self, reticulado):
-        """Devuelve el largo de la barra.
-        xi : Arreglo numpy de dimenson (3,) con coordenadas del nodo i
-        xj : Arreglo numpy de dimenson (3,) con coordenadas del nodo j
-        """
-        xi = reticulado.obtener_coordenada_nodal(self.ni)
-        xj = reticulado.obtener_coordenada_nodal(self.nj)
-        dij = xi-xj
-        return np.sqrt(np.dot(dij,dij))
+	def calcular_largo(self, reticulado):
+		"""Devuelve el largo de la barra.
+		xi : Arreglo numpy de dimenson (3,) con coordenadas del nodo i
+		xj : Arreglo numpy de dimenson (3,) con coordenadas del nodo j
+		"""
+		xi = reticulado.obtener_coordenada_nodal(self.ni)
+		xj = reticulado.obtener_coordenada_nodal(self.nj)
+		dij = xi-xj
+		return np.sqrt(np.dot(dij,dij))
 
-    def calcular_peso(self, reticulado):
-
-
+	def calcular_peso(self, reticulado):
+		
 		L = self.calcular_largo(reticulado)
 		Peso = self.seccion.peso()
-
 		print(Peso)
 		return Peso * L
 
@@ -77,23 +76,11 @@ class Barra(object):
 		Tθ = np.array([ -cosθx, -cosθy, -cosθz, cosθx, cosθy, cosθz ]).reshape((6,1))
 
 		return E_acero * A / L * (Tθ @ Tθ.T )
-
-    def obtener_vector_de_cargas(self, ret):
+	def obtener_vector_de_cargas(self, ret):
         
 		W = self.calcular_peso(ret)
 
 		return np.array([0, 0, -W, 0, 0, -W])
-
-
-
-
-
-def chequear_diseño(self, Fu, ret, ϕ=0.9):
-
-
-
-    """Implementar"""
-
 
     def obtener_fuerza(self, ret):
 		ue = np.zeros(6)
@@ -138,15 +125,21 @@ def chequear_diseño(self, Fu, ret, ϕ=0.9):
 		return E_acero * A / L * (Tθ.T @ ue)
 
 
+'''
+    def chequear_diseño(self, Fu, ret, ϕ=0.9):
+        
+        """Implementar"""	
+        
+        return 0
 
 
 
 
-def obtener_factor_utilizacion(self, Fu, ϕ=0.9):
-
-    """Implementar"""
-
-    return 0
+    def obtener_factor_utilizacion(self, Fu, ϕ=0.9):
+        
+        """Implementar"""	
+        
+        return 0
 
 
 
@@ -155,4 +148,5 @@ def obtener_factor_utilizacion(self, Fu, ϕ=0.9):
         """Implementar"""    
         
         return 0
+'''
 
