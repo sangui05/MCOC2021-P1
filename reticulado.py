@@ -146,28 +146,40 @@ class Reticulado(object):
            #self.u # grados de libertad
         return 0
 
-
-
     def resolver_sistema(self):
-        
-        """Implementar"""	
-        # A DEFININIR
-        
-        #self.Ff
-        #self.Fc
-        #self.Kcc
-        #self.Kff
-        #self.Kfc
-        #self.Kcf
-        
-        #self.u
-        #self.uf
-        #self.uc
-        
-        #self.R REACCIONES
-        
-        #para graficar ret.u
-        
+
+        grados_totales = np.arange(self.Nnodos * 3)
+        gdl_c = []
+        for i in self.restricciones:
+            for j in self.restricciones[i]:
+                gdl, valor = j[0], j[1]
+                gdl_global = gdl + i * 3
+                self.u[gdl_global] += valor
+                gdl_c.append(gdl_global)
+
+        np.array(gdl_c)
+        gdl_f = np.setdiff1d(grados_totales, gdl_c)
+
+        for i in self.cargas:
+            for j in self.cargas[i]:
+                gdl, valor = j[0], j[1]
+                gdl_global = gdl + i * 3
+                self.f[gdl_global] += valor
+
+        self.Ff = self.F[gdl_f]
+        self.Fc = self.F[gdl_c]
+        self.Kcc = self.K[np.ix_(gdl_c, gdl_c)]
+        self.Kff = self.K[np.ix_(gdl_f, gdl_f)]
+        self.Kfc = self.K[np.ix_(gdl_f, gdl_c)]
+        self.Kcf = self.K[np.ix_(gdl_c, gdl_f)]
+
+        self.uf = self.u[gdl_f]
+        self.uc = self.u[gdl_c]
+
+        self.R = solve(self.Kff, self.Ff - self.Kfc @ self.uc)
+
+        self.u[gdl_f] = self.R
+
         return 0
 
     def obtener_desplazamiento_nodal(self, n):
@@ -386,4 +398,4 @@ class Reticulado(object):
 
         return s
 
->>>>>>> 6d74533092e64a36f939a146f155ef273688fe5a
+
