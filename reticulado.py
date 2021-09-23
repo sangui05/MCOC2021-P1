@@ -1,4 +1,5 @@
 
+
 from scipy.linalg import solve
 from barra import Barra
 import numpy as np
@@ -148,27 +149,7 @@ class Reticulado(object):
 
 
 
-    def resolver_sistema(self):
-        
-        """Implementar"""	
-        # A DEFININIR
-        
-        #self.Ff
-        #self.Fc
-        #self.Kcc
-        #self.Kff
-        #self.Kfc
-        #self.Kcf
-        
-        #self.u
-        #self.uf
-        #self.uc
-        
-        #self.R REACCIONES
-        
-        #para graficar ret.u
-        
-        return 0
+   
 
     def obtener_desplazamiento_nodal(self, n):
         
@@ -230,3 +211,99 @@ class Reticulado(object):
         return s
 
 
+
+
+    def resolver_sistema(self):
+
+        grados_totales = np.arange(self.Nnodos * 3)
+        gdl_c = []
+        for i in self.restricciones:
+            for j in self.restricciones[i]:
+                gdl, valor = j[0], j[1]
+                gdl_global = gdl + i * 3
+                self.u[gdl_global] += valor
+                gdl_c.append(gdl_global)
+
+        np.array(gdl_c)
+        gdl_f = np.setdiff1d(grados_totales, gdl_c)
+
+        for i in self.cargas:
+            for j in self.cargas[i]:
+                gdl, valor = j[0], j[1]
+                gdl_global = gdl + i * 3
+                self.f[gdl_global] += valor
+
+        self.Ff = self.F[gdl_f]
+        self.Fc = self.F[gdl_c]
+        self.Kcc = self.K[np.ix_(gdl_c, gdl_c)]
+        self.Kff = self.K[np.ix_(gdl_f, gdl_f)]
+        self.Kfc = self.K[np.ix_(gdl_f, gdl_c)]
+        self.Kcf = self.K[np.ix_(gdl_c, gdl_f)]
+
+        self.uf = self.u[gdl_f]
+        self.uc = self.u[gdl_c]
+
+        self.R = solve(self.Kff, self.Ff - self.Kfc @ self.uc)
+
+        self.u[gdl_f] = self.R
+
+        return 0
+
+    def obtener_desplazamiento_nodal(self, n):
+        
+        """Implementar"""	
+        
+        return 0
+
+
+    def obtener_fuerzas(self):
+        
+        """Implementar"""	
+        
+        return 0
+
+
+    def obtener_factores_de_utilizacion(self, f):
+        
+        """Implementar"""	
+        
+        return 0
+
+    def rediseñar(self, Fu, ϕ=0.9):
+        
+        """Implementar"""	
+        
+        return 0
+
+
+
+    def chequear_diseño(self, Fu, ϕ=0.9):
+        
+        """Implementar"""	
+        
+        return 0
+
+
+
+
+
+
+
+    def __str__(self):
+
+        s = "Soy un reticulado :) \n"
+
+        s += "Nodos: \n"
+
+        for i in range(self.Nnodos):
+            s += f"{i} : ({self.xyz[i][0]}, {self.xyz[i][1]}, {self.xyz[i][2]})\n"
+            i += 1
+
+        s += "Barras: \n"
+
+        h = 0
+        for i in self.barras:
+            s += f"{h} : [{self.barras[h].ni} {self.barras[h].nj}]\n"
+            h += 1
+
+        return s

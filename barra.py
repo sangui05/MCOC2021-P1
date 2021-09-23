@@ -32,11 +32,13 @@ class Barra(object):
 
     def calcular_peso(self, reticulado):
 
-        L = self.calcular_largo(reticulado)
-        Peso = self.seccion.peso()
 
-        print(Peso)
-        return Peso * L
+		L = self.calcular_largo(reticulado)
+		Peso = self.seccion.peso()
+
+		print(Peso)
+		return Peso * L
+
 
 
     def obtener_rigidez(self, ret):
@@ -61,13 +63,42 @@ class Barra(object):
         return np.array([0, 0, -W, 0, 0, -W])
 
 
+	def obtener_rigidez(self, ret):
+		A = self.calcular_area()
+		L = self.calcular_largo(ret)
+
+		xi = ret.obtener_coordenada_nodal(self.ni)
+		xj = ret.obtener_coordenada_nodal(self.nj)
+
+		cosθx = (xj[0] - xi[0])/L
+		cosθy = (xj[1] - xi[1])/L
+		cosθz = (xj[2] - xi[2])/L
+
+		Tθ = np.array([ -cosθx, -cosθy, -cosθz, cosθx, cosθy, cosθz ]).reshape((6,1))
+
+		return E_acero * A / L * (Tθ @ Tθ.T )
+
+    def obtener_vector_de_cargas(self, ret):
+        
+		W = self.calcular_peso(ret)
+
+		return np.array([0, 0, -W, 0, 0, -W])
+
+
 
 
 
 def chequear_diseño(self, Fu, ret, ϕ=0.9):
 
 
+
     """Implementar"""
+
+
+    def obtener_fuerza(self, ret):
+		ue = np.zeros(6)
+		ue[0:3] = ret.obtener_desplazamiento_nodal(self.ni)
+		ue[3:] = ret.obtener_desplazamiento_nodal(self.nj)
 
 
     def obtener_fuerza(self, ret):
@@ -92,6 +123,25 @@ def chequear_diseño(self, Fu, ret, ϕ=0.9):
 
 
 
+		A = self.calcular_area()
+		L = self.calcular_largo(ret)
+
+		xi = ret.obtener_coordenada_nodal(self.ni)
+		xj = ret.obtener_coordenada_nodal(self.nj)
+
+		cosθx = (xj[0] - xi[0])/L
+		cosθy = (xj[1] - xi[1])/L
+		cosθz = (xj[2] - xi[2])/L
+
+		Tθ = np.array([ -cosθx, -cosθy, -cosθz, cosθx, cosθy, cosθz ]).reshape((6,1))
+
+		return E_acero * A / L * (Tθ.T @ ue)
+
+
+
+
+
+
 def obtener_factor_utilizacion(self, Fu, ϕ=0.9):
 
     """Implementar"""
@@ -99,8 +149,10 @@ def obtener_factor_utilizacion(self, Fu, ϕ=0.9):
     return 0
 
 
+
     def rediseñar(self, Fu, ret, ϕ=0.9):
         
         """Implementar"""    
         
         return 0
+
