@@ -103,5 +103,5 @@ class Barra(object):
         """Implementar"""   
         
         return 0
-'''
+
 
