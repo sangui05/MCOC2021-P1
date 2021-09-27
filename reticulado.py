@@ -130,7 +130,17 @@ class Reticulado(object):
         return cumple
 
 
+    def guardar(self, nombre):
 
+        """Implementar"""   
+
+        return 0
+
+    def abrir(self, nombre):
+
+        """Implementar"""   
+
+        return 0
 
 
 
