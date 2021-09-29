@@ -2,6 +2,7 @@ from numpy import pi, sqrt, nan
 from numpy.random import rand
 from constantes import g_, ρ_acero, mm_
 import pandas as pd
+
  
 class Circular(object):
     """define una seccion Circular"""
@@ -13,7 +14,6 @@ class Circular(object):
         self.color = color  #color para la seccion
 
     def area(self):
-        print (pi*(self.D**2 - self.Dint**2)/4)
         return pi*(self.D**2 - self.Dint**2)/4
 
     def peso(self):
@@ -37,67 +37,225 @@ class Circular(object):
 
 class SeccionICHA(object):
     """Lee la tabla ICHA y genera una seccion apropiada"""
-#    pd.read_excel()
+
     def __init__(self, denominacion, base_datos="Perfiles ICHA.xlsx", debug=False, color=rand(3)):
         super(SeccionICHA, self).__init__()
         self.denominacion = denominacion
         self.color = color  #color para la seccion
-        str = ''
+
+    
+
+
+    def area(self):
+        
+
+        palabras=[]
+        palabra=''
         for i in self.denominacion:
+            
             if i == 'H':
-                self.base_datos = pd.read_excel(base_datos, sheet_name='H', header=None)
-                str = self.denominacion[1:]
                 continue
-
-            if i == 'R':
-                self.base_datos = pd.read_excel(base_datos, sheet_name='HR', header=None)
-                str = self.denominacion[2:]
-
-        palabras = []
-        palabra = ''
-        for i in str:
-
-            if i == 'x':
+            elif i == 'R':
+                continue
+            elif i == '[':
+                continue
+            elif i == ']':
+                continue
+            elif i =='x':
                 palabras.append(float(palabra))
-                palabra = ''
+                palabra=''
 
             else:
                 palabra += i
 
-        palabras.append(float(palabra))
+        palabras.append(palabra)
         print(palabras)
+        datos=pd.read_excel('Perfiles ICHA.xlsx', sheet_name='HR',header=None)
 
+        for i in range(0,len(datos[5])):
 
+            if datos[5][i] == palabras[0]:
+                        
+                if datos[7][i]==palabras[1]:
+                            
+                    if datos[9][i]==float(palabras[2]):
 
+                        return datos[13][i]
+                        
+        datos1=pd.read_excel('Perfiles ICHA.xlsx', sheet_name='H',header=None) 
 
-        for i in range(0, len(self.base_datos[1])):
-            if self.base_datos[1][i] == palabras[0]:
-                if self.base_datos[3][i] == palabras[1]:
-                    if self.base_datos[5][i] == palabras[2]:
-                        self.posicion = i
+        for i in range(0,len(datos1[1])):
 
+            if datos1[1][i] == palabras[0]:
+                       
+                if datos1[3][i] == palabras[1]:
 
-    def area(self):
+                    if datos1[5][i] ==  float(palabras[2]):
+                        
+                        return datos1[9][i]
+                        
+        datos2=pd.read_excel('Perfiles ICHA.xlsx', sheet_name='Cajon',header=None)   
 
-        area = self.base_datos[9][self.posicion]
+        for i in range(0,len(datos2[1])):
 
-        return area
+            if datos2[1][i] == palabras[0]:
+
+                if datos2[3][i] == palabras[1]:
+                    
+
+                    if datos2[5][i] == float(palabras[2]):
+                        
+                        return datos2[8][i]
+
+        
 
     def peso(self):
+        palabras=[]
+        palabra=''
+        for i in self.denominacion:
+            
+            if i == 'H':
+                continue
+            elif i == 'R':
+                continue
+            elif i == '[':
+                continue
+            elif i == ']':
+                continue
+            elif i =='x':
+                palabras.append(float(palabra))
+                palabra=''
 
-        peso = self.base_datos[3][self.posicion]
+            else:
+                palabra += i
 
-        return 0
+        return(palabras[2])
+
 
     def inercia_xx(self):
+        
 
-        inercia_xx = self.base_datos[10][self.posicion]
-        return inercia_xx
+        palabras=[]
+        palabra=''
+        for i in self.denominacion:
+            
+            if i == 'H':
+                continue
+            elif i == 'R':
+                continue
+            elif i == '[':
+                continue
+            elif i == ']':
+                continue
+            elif i =='x':
+                palabras.append(float(palabra))
+                palabra=''
 
+            else:
+                palabra += i
+
+        palabras.append(palabra)
+        print(palabras)
+        
+        datos=pd.read_excel('Perfiles ICHA.xlsx', sheet_name='HR',header=None)
+
+        for i in range(0,len(datos[5])):
+
+            if datos[5][i] == palabras[0]:
+                        
+                if datos[7][i]==palabras[1]:
+                            
+                    if datos[9][i]==float(palabras[2]):
+                        
+                        return datos[13][i]
+                        
+        datos1=pd.read_excel('Perfiles ICHA.xlsx', sheet_name='H',header=None)    
+
+        for i in range(0,len(datos1[1])):
+
+            if datos1[1][i] == palabras[0]:
+                       
+                if datos1[3][i] == palabras[1]:
+
+                    if datos1[5][i] ==  float(palabras[2]):
+                        
+                        return datos1[9][i]
+                        
+        datos2=pd.read_excel('Perfiles ICHA.xlsx', sheet_name='Cajon',header=None) 
+
+        for i in range(0,len(datos2[1])):
+
+            if datos2[1][i] == palabras[0]:
+                
+                if datos2[3][i] == palabras[1]:
+                    
+
+                    if datos2[5][i] == float(palabras[2]):
+                        
+                        return datos2[9][i]
     def inercia_yy(self):
+        
 
-        inercia_yy = self.base_datos[14][self.posicion]
-        return inercia_yy
+        palabras=[]
+        palabra=''
+        for i in self.denominacion:
+            
+            if i == 'H':
+                continue
+            elif i == 'R':
+                continue
+            elif i == '[':
+                continue
+            elif i == ']':
+                continue
+            elif i =='x':
+                palabras.append(float(palabra))
+                palabra=''
+
+            else:
+                palabra += i
+
+        palabras.append(palabra)
+        print(palabras)
+        datos=pd.read_excel('Perfiles ICHA.xlsx', sheet_name='HR',header=None)
+
+        for i in range(0,len(datos[5])):
+
+            if datos[5][i] == palabras[0]:
+                        
+                if datos[7][i]==palabras[1]:
+                            
+                    if datos[9][i]==float(palabras[2]):
+                        
+                        return datos[13][i]
+                        
+        datos1=pd.read_excel('Perfiles ICHA.xlsx', sheet_name='H',header=None)
+
+        for i in range(0,len(datos1[1])):
+
+            if datos1[1][i] == palabras[0]:
+                       
+                if datos1[3][i] == palabras[1]:
+
+                    if datos1[5][i] ==  float(palabras[2]):
+                        
+                        return datos1[9][i]
+                        
+        datos2=pd.read_excel('Perfiles ICHA.xlsx', sheet_name='Cajon',header=None)    
+
+        for i in range(0,len(datos2[1])):
+
+            if datos2[1][i] == palabras[0]:
+                
+
+                if datos2[3][i] == palabras[1]:
+                    
+
+                    if datos2[5][i] == float(palabras[2]):
+        
+                        return datos2[12][i]
 
     def __str__(self):
-        return f"Seccion ICHA {self.denominacion}, area {self.area()}, inercia xx {self.inercia_xx()}, inercia yy {self.inercia_yy()}"
+        
+
+        return f"Seccion ICHA {self.denominacion} \n Area:  {SeccionICHA.area(self)}\n Peso:  {SeccionICHA.peso(self)}\n Ixx:  {SeccionICHA.inercia_xx(self)}\n Iyy:  {SeccionICHA.inercia_yy(self)}"
