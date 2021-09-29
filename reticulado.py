@@ -192,11 +192,12 @@ class Reticulado(object):
 
 
 
-    def chequear_diseño(self, Fu, ϕ=0.9):
+    def chequear_diseño(self, Fu, ϕ=0.9, silence=False):
         cumple = True
         for i,b in enumerate(self.barras):
-            if not b.chequear_diseño(Fu[i], self, ϕ):
-                print(f"----> Barra {i} no cumple algun criterio. ")
+            if not b.chequear_diseño(Fu[i], self, ϕ, silence=silence):
+                if not silence:
+                    print(f"----> Barra {i} no cumple algun criterio. ")
                 cumple = False
         return cumple
 

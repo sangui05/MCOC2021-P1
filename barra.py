@@ -96,7 +96,7 @@ class Barra(object):
 
 
 
-    def chequear_diseño(self, Fu, ret, ϕ=0.9):
+    def chequear_diseño(self, Fu, ret, ϕ=0.9, silence=False):
 
         area = self.seccion.area()
         peso = self.seccion.peso()
@@ -109,7 +109,8 @@ class Barra(object):
 
         #Revisar resistencia nominal
         if abs(Fu) > ϕ*Fn:
-            print(f"Resistencia nominal Fu = {Fu} ϕ*Fn = {ϕ*Fn}")
+            if not silence:
+                print(f"Resistencia nominal Fu = {Fu} ϕ*Fn = {ϕ*Fn}")
             return False
 
         L = self.calcular_largo(ret)
@@ -120,14 +121,16 @@ class Barra(object):
 
         #Revisar radio de giro
         if Fu >= 0 and L/i > 300:
-            print(f"Esbeltez Fu = {Fu} L/i = {L/i}")
+            if not silence:
+                print(f"Esbeltez Fu = {Fu} L/i = {L/i}")
             return False
 
         #Revisar carga critica de pandeo
         if Fu < 0:  #solo en traccion
             Pcr = np.pi**2*E_acero*I / L**2
             if abs(Fu) > Pcr:
-                print(f"Pandeo Fu = {Fu} Pcr = {Pcr}")
+                if not silence:
+                    print(f"Pandeo Fu = {Fu} Pcr = {Pcr}")
                 return False
 
         #Si pasa todas las pruebas, estamos bien
