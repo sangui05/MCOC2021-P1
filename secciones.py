@@ -255,6 +255,9 @@ class SeccionICHA(object):
         
                         return datos2[12][i]
 
+    def nombre(self):
+        return self.denominacion
+
     def __str__(self):
         
 
