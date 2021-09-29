@@ -4,6 +4,8 @@ from barra import Barra
 import numpy as np
 from scipy.linalg import solve
 from barra import Barra
+from matplotlib.pylab import *
+import h5py
 #bar = Barra()
 class Reticulado(object):
     """Define un reticulado"""
@@ -135,7 +137,7 @@ class Reticulado(object):
             for n in range(self.Nnodos):
                 for carga in self.cargas(n):
                     if len(carga)!= 0:
-                        self.f[n*N_dimensiones+carga[0]] += carga[1]
+                        self.f[n*Nm+carga[0]] += carga[1]
             self.F.append(f)
 
 
@@ -291,9 +293,46 @@ class Reticulado(object):
         """Implementar"""	
         
 
+ #       for e in self.barras: #recore las barras #barras tiene [N°barra | ni | nj]
+ #           ni = self.barras[1] 
+ #           nj = self.barras[2]
+ #           
+ #           ke = e.obtener_rigidez()
+ #           fe = e.obtener_vector_de_carga()          
+ #           d = [3*ni,3*ni+1, 3*ni+2,3*nj,3*nj+1,3*nj+2]
+ #           
+ #          for i in range(6):
+ #               p = d[i]
+ #               for j in range(6):
+ #                   q = d[j]
+ #                   K[p,q] += k_e[i,j]
+ #               f[p] += f_e[i]
+ #           
+ #           #agregar cargas puntuales
+ #           
+ #         for nodo in cargas:
+ #                   print(nodo)
+ #                   Ncargas = len(cargas[nodo])
+ #                   print(Ncargas)
+ #                   
+ #                   for carga in range :
+ #                       
+ #                       gdl = cargas[nodo][0]
+ #                       f = cargas[nodo][1]
+ #                      print(f"Agregando carga de {f} en GDL {gdl}")
+ #                     
+ #                      gdl_global = 3*node + gdl
+ #                      F[gdl_global] += f
+           # 
+           #
+           #
+           
+           #self.K #matriz rigidez
+           #self.u # grados de libertad
+
 
     def agregar_nodo(self, x, y, z=0):
-        
+
         """Implementar"""	
 
         print(f"Quiero agregar un nodo en ({x} {y} {z})")
@@ -313,7 +352,6 @@ class Reticulado(object):
 
     def obtener_coordenada_nodal(self, n):
         
-        """Implementar"""	
         
         return 0
 
@@ -341,28 +379,14 @@ class Reticulado(object):
 
     def agregar_fuerza(self, nodo, gdl, valor):
         
-        """Implementar"""	
+        """Implementar"""    
         
         return 0
 
-
-    def ensamblar_sistema(self, factor_peso_propio=0.):
-        
-        """Implementar"""	
-        
-        return 0
-
-
-
-    def resolver_sistema(self):
-        
-        """Implementar"""	
-        
-        return 0
 
     def obtener_desplazamiento_nodal(self, n):
         
-        """Implementar"""	
+        """Implementar"""    
         
         return 0
 
@@ -387,8 +411,38 @@ class Reticulado(object):
 
     def rediseñar(self, Fu, ϕ=0.9):
         
-        """Implementar"""	
+        """Implementar"""    
         
+        return 0
+
+    def guardar(self, nombre):
+    
+        fid = h5py.File(nombre,"w")
+        guarda_nodos = []
+        for i in range (self.Nnodos):
+            guarda_nodos.append(i)
+        fid["coordenadas nodos"] = guarda_nodos
+        
+        
+        guardar_barras = np.zeros((len(self.barras),2),dtype=h5py.string_dtype())
+        for i, barra in enumerate(self.barras):
+            guardar_barras[i,:] = [barra.ni,barra.nj]
+        fid["Barras"] = guardar_barras
+        fid.close()    
+        
+        
+        
+        
+        
+        
+        
+    
+        return 0
+    
+    def abrir(self, nombre):
+    
+        """Implementar"""   
+    
         return 0
 
 
@@ -401,27 +455,6 @@ class Reticulado(object):
                 cumple = False
         return cumple
 
-
-    def guardar(self, nombre):
-
-        """Implementar"""   
-
-        return 0
-
-    def abrir(self, nombre):
-
-        """Implementar"""   
-
-        return 0
+  
 
 
-
-    def __str__(self):
-
-        s = "Soy un reticulado :)"
-
-        s += "\n"
-        
-        s += str(self.xyz[0 : self.Nnodos,:])
-
-        return s
