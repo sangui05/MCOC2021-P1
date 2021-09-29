@@ -3,9 +3,10 @@ from scipy.linalg import solve
 from barra import Barra
 import numpy as np
 from scipy.linalg import solve
+from secciones import SeccionICHA
 from barra import Barra
 from matplotlib.pylab import *
-import h5py
+import h5py as h5
 #bar = Barra()
 class Reticulado(object):
     """Define un reticulado"""
@@ -190,61 +191,6 @@ class Reticulado(object):
         #---------------------FIN EJEMPLO PROFE----------------------------------------
 
 
-        def resolver_sistema(self):
-
-            """Implementar"""
-            # A DEFININIR
-
-            #self.Ff
-            #self.Fc
-            #self.Kcc
-            #self.Kff
-            #self.Kfc
-            #self.Kcf
-
-            #self.u
-            #self.uf
-            #self.uc
-
-            #self.R REACCIONES
-
-            #para graficar ret.u
-
-            return 0
-
-        def obtener_desplazamiento_nodal(self, n):
-
-            """Implementar"""
-
-            return 0
-
-
-        def obtener_fuerzas(self):
-
-            """Implementar"""
-
-            return 0
-
-
-        def obtener_factores_de_utilizacion(self, f):
-
-            """Implementar"""
-
-            return 0
-
-        def rediseñar(self, Fu, ϕ=0.9):
-
-            """Implementar"""
-
-            return 0
-
-
-
-        def chequear_diseño(self, Fu, ϕ=0.9):
-
-            """Implementar"""
-
-            return 0
 
 
 
@@ -272,26 +218,21 @@ class Reticulado(object):
             return s
 
 
-import numpy as np
-from scipy.linalg import solve
 
-class Reticulado(object):
-    """Define un reticulado"""
-    __NNodosInit__ = 100
 
     #constructor
     def __init__(self):
         super(Reticulado, self).__init__()
-        
+
         print("Constructor de Reticulado")
-        
+
         self.xyz = np.zeros((Reticulado.__NNodosInit__,3), dtype=np.double)
         self.Nnodos = 0
         self.barras = []
         self.cargas = {}
         self.restricciones = {}
-        """Implementar"""	
-        
+        """Implementar"""
+
 
  #       for e in self.barras: #recore las barras #barras tiene [N°barra | ni | nj]
  #           ni = self.barras[1] 
@@ -333,7 +274,7 @@ class Reticulado(object):
 
     def agregar_nodo(self, x, y, z=0):
 
-        """Implementar"""	
+        """Implementar"""
 
         print(f"Quiero agregar un nodo en ({x} {y} {z})")
         numero_de_nodo_actual = self.Nnodos
@@ -341,7 +282,7 @@ class Reticulado(object):
         self.xyz[numero_de_nodo_actual,:] = [x, y, z]
 
         self.Nnodos += 1
-        
+
         return 0
 
     def agregar_barra(self, barra):
@@ -391,13 +332,6 @@ class Reticulado(object):
         return 0
 
 
-    def obtener_fuerzas(self):
-        
-        fuerzas = np.zeros((len(self.barras)), dtype=np.double)
-        for i,b in enumerate(self.barras):
-            fuerzas[i] = b.obtener_fuerza(self)
-
-        return fuerzas
 
 
     def obtener_factores_de_utilizacion(self, f, ϕ=0.9):
@@ -416,33 +350,87 @@ class Reticulado(object):
         return 0
 
     def guardar(self, nombre):
-    
-        fid = h5py.File(nombre,"w")
-        guarda_nodos = []
-        for i in range (self.Nnodos):
-            guarda_nodos.append(i)
-        fid["coordenadas nodos"] = guarda_nodos
-        
-        
-        guardar_barras = np.zeros((len(self.barras),2),dtype=h5py.string_dtype())
-        for i, barra in enumerate(self.barras):
-            guardar_barras[i,:] = [barra.ni,barra.nj]
-        fid["Barras"] = guardar_barras
-        fid.close()    
-        
-        
-        
-        
-        
-        
-        
-    
-        return 0
-    
+
+        dataset = h5.File(nombre, "w")
+
+        dataset["xyz"] = self.xyz
+
+        barras = np.zeros((len(self.barras), 2), dtype=np.int32)
+        for i, b in enumerate(self.barras):
+            barras[i, 0] = b.ni
+            barras[i, 1] = b.nj
+        dataset["barras"] = barras
+
+        secciones = np.zeros((len(self.barras), 1), dtype=h5.string_dtype())
+        for i, barr in enumerate(self.barras):
+            secciones[i] = barr.seccion.nombre()
+        dataset["secciones"] = secciones
+
+        c = 0
+        for nodo in self.restricciones:
+            for i in self.restricciones[nodo]:
+                c += 1
+
+        restricciones = np.zeros((c, 2), dtype=np.int32)
+
+        restricciones_val = np.zeros((c, 1), dtype=np.double)
+
+        c = 0
+        for nodo in self.restricciones:
+
+            for i in self.restricciones[nodo]:
+                restricciones[c, 0] = nodo
+                restricciones[c, 1] = i[0]
+
+                restricciones_val[c, 0] = i[1]
+                c += 1
+
+        c = 0
+
+        for nodo in self.cargas:
+            for i in self.cargas[nodo]:
+                c += 1
+
+        cargas = np.zeros((c, 2), dtype=np.int32)
+
+        cargas_val = np.zeros((c, 1), dtype=np.double)
+
+        c = 0
+        for nodo in self.cargas:
+            for i in self.cargas[nodo]:
+                cargas[c, 0] = nodo
+                cargas[c, 1] = i[0]
+                cargas_val[c, 0] = i[1]
+            c += 1
+
+            return 0
+
     def abrir(self, nombre):
-    
-        """Implementar"""   
-    
+
+        up = h5.File(nombre, "r")
+        barras = up["barras"]
+        cargas = up["cargas"]
+        cargas_val = up["cargas_val"]
+        restricciones = up["restricciones"]
+        restricciones_val = up["restricciones_val"]
+        secciones = up["secciones"]
+        xyz = up["xyz"]
+
+        for i, barra in enumerate(barras):
+            self.agregar_barra(
+                Barra(np.int32(barra[0]), np.int32(barra[1]), SeccionICHA(secciones[i][0]), color=np.random.rand(3)))
+
+        for i, carga in enumerate(cargas):
+            self.agregar_fuerza(np.int32(carga[0]), np.float32(carga[1]), np.float32(cargas_val[i]))
+
+        for i in xyz:
+            self.agregar_nodo(i[0], i[1], i[2])
+
+        for i, r in enumerate(restricciones):
+            self.agregar_restriccion(np.int32(r[0]), np.int32(r[1]), np.int32(restricciones_val[i]))
+
+        up.close()
+
         return 0
 
 
