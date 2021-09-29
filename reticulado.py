@@ -4,6 +4,8 @@ from barra import Barra
 import numpy as np
 from scipy.linalg import solve
 from barra import Barra
+from matplotlib.pylab import *
+import h5py
 #bar = Barra()
 class Reticulado(object):
     """Define un reticulado"""
@@ -135,7 +137,7 @@ class Reticulado(object):
             for n in range(self.Nnodos):
                 for carga in self.cargas(n):
                     if len(carga)!= 0:
-                        self.f[n*N_dimensiones+carga[0]] += carga[1]
+                        self.f[n*Nm+carga[0]] += carga[1]
             self.F.append(f)
                     
                     
@@ -156,7 +158,7 @@ class Reticulado(object):
  #           fe = e.obtener_vector_de_carga()          
  #           d = [3*ni,3*ni+1, 3*ni+2,3*nj,3*nj+1,3*nj+2]
  #           
- 3           for i in range(6):
+ #          for i in range(6):
  #               p = d[i]
  #               for j in range(6):
  #                   q = d[j]
@@ -165,7 +167,7 @@ class Reticulado(object):
  #           
  #           #agregar cargas puntuales
  #           
- 3           for nodo in cargas:
+ #         for nodo in cargas:
  #                   print(nodo)
  #                   Ncargas = len(cargas[nodo])
  #                   print(Ncargas)
@@ -190,7 +192,7 @@ class Reticulado(object):
 
     def resolver_sistema(self):
         
-        """Implementar"""	
+        """Implementar"""    
         # A DEFININIR
         
         #self.Ff
@@ -212,27 +214,30 @@ class Reticulado(object):
 
     def obtener_desplazamiento_nodal(self, n):
         
-        """Implementar"""	
+        """Implementar"""    
         
         return 0
-
-
     def obtener_fuerzas(self):
-        
-        """Implementar"""	
-        
-        return 0
+            
+            fuerzas = np.zeros((len(self.barras)), dtype=np.double)
+            for i,b in enumerate(self.barras):
+                fuerzas[i] = b.obtener_fuerza(self)
+    
+            return fuerzas
 
 
-    def obtener_factores_de_utilizacion(self, f):
+    def obtener_factores_de_utilizacion(self, f, ϕ=0.9):
         
-        """Implementar"""	
-        
-        return 0
+        FU = np.zeros((len(self.barras)), dtype=np.double)
+        for i,b in enumerate(self.barras):
+            FU[i] = b.obtener_factor_utilizacion(f[i], ϕ)
+
+        return FU
+
 
     def rediseñar(self, Fu, ϕ=0.9):
         
-        """Implementar"""	
+        """Implementar"""    
         
         return 0
 
@@ -240,9 +245,41 @@ class Reticulado(object):
 
     def chequear_diseño(self, Fu, ϕ=0.9):
         
-        """Implementar"""	
+        """Implementar"""    
         
         return 0
+
+    def guardar(self, nombre):
+    
+        fid = h5py.File(nombre,"w")
+        guarda_nodos = []
+        for i in range (self.Nnodos):
+            guarda_nodos.append(i)
+        fid["coordenadas nodos"] = guarda_nodos
+        
+        
+        guardar_barras = np.zeros((len(self.barras),2),dtype=h5py.string_dtype())
+        for i, barra in enumerate(self.barras):
+            guardar_barras[i,:] = [barra.ni,barra.nj]
+        fid["Barras"] = guardar_barras
+        fid.close()    
+        
+        
+        
+        
+        
+        
+        
+    
+        return 0
+    
+    def abrir(self, nombre):
+    
+        """Implementar"""   
+    
+        return 0
+
+
 
 
 
