@@ -375,6 +375,7 @@ class Reticulado(object):
         restricciones_val = np.zeros((c, 1), dtype=np.double)
 
         c = 0
+        dataset.close()
         for nodo in self.restricciones:
 
             for i in self.restricciones[nodo]:
