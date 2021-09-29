@@ -1,4 +1,3 @@
-
 from scipy.linalg import solve
 from barra import Barra
 import numpy as np
@@ -64,14 +63,6 @@ class Reticulado(object):
     def obtener_nodos(self):
 
         return self.xyz
-
-    def obtener_fuerzas(self):
-
-        fuerzas = np.zeros((len(self.barras)), dtype=np.double)
-        for i, b in enumerate(self.barras):
-            fuerzas[i] = b.obtener_fuerza(self)
-
-        return fuerzas
 
     def obtener_barras(self):
 
@@ -198,57 +189,7 @@ class Reticulado(object):
 
         #---------------------FIN EJEMPLO PROFE----------------------------------------
 
-        def resolver_sistema(self):
 
-            """Implementar"""
-            # A DEFININIR
-
-            # self.Ff
-            # self.Fc
-            # self.Kcc
-            # self.Kff
-            # self.Kfc
-            # self.Kcf
-
-            # self.u
-            # self.uf
-            # self.uc
-
-            # self.R REACCIONES
-
-            # para graficar ret.u
-
-            return 0
-
-        def obtener_desplazamiento_nodal(self, n):
-
-            """Implementar"""
-
-            return 0
-
-        def obtener_fuerzas(self):
-
-            """Implementar"""
-
-            return 0
-
-        def obtener_factores_de_utilizacion(self, f):
-
-            """Implementar"""
-
-            return 0
-
-        def rediseñar(self, Fu, ϕ=0.9):
-
-            """Implementar"""
-
-            return 0
-
-        def chequear_diseño(self, Fu, ϕ=0.9):
-
-            """Implementar"""
-
-            return 0
 
 
 
@@ -501,6 +442,5 @@ class Reticulado(object):
                 cumple = False
         return cumple
 
-  
 
 
