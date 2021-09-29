@@ -133,7 +133,7 @@ def graficar_barras(ret, fig, opciones):
             color=c,
             linewidth=opciones["grosor_barras"],
             )
-
+'''
         if txt_case > 0:
             x0 = x.mean()
             y0 = y.mean()
@@ -155,7 +155,7 @@ def graficar_barras(ret, fig, opciones):
                 verticalalignment="center",
                 backgroundcolor=opciones["color_fondo"],
                 )
-
+'''
 def ver_reticulado_3d(ret, fig=1, 
     ver_nodos=True,
     ver_barras=True,
