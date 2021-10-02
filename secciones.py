@@ -43,6 +43,8 @@ class SeccionICHA(object):
         self.denominacion = denominacion
         self.color = color  #color para la seccion
 
+        print(f"Buscando {denominacion} en base_datos = {base_datos}")
+
         if denominacion[0:2] == "HR" or denominacion[0] == "W":
             tab = "HR"
             tipo = "HR"
@@ -64,19 +66,25 @@ class SeccionICHA(object):
 
         found = False
 
-        xls = read_excel(base_datos,
-        engine="openpyxl",
-        sheet_name=tab,
-        header=3)
+        print(f"  Abriendo tab = {tab}")
 
-        if debug:
-            print("======xls=======")
-            print(xls)
-            print("======xls=======")
+        def open_on_tab(tab, header):
+            xls = read_excel(base_datos,
+            engine="openpyxl",
+            sheet_name=tab,
+            header=header)
+            if debug:
+                print("======xls=======")
+                print(xls)
+                print("======xls=======")
+
+            return xls
+
 
 
         if tipo == "H" or tipo == "HR":
             Nregistros = len(xls["A"])-2
+            xls = open_on_tab(tab, 11)
             for i_fila in range(Nregistros):
                 
                 df = xls.loc[i_fila+2,["d","bf","peso","A","Ix/10⁶","Iy/10⁶",]]
@@ -106,6 +114,7 @@ class SeccionICHA(object):
                     print(f"{den} encontrada. A={self.A} Ix={self.Ixx} Iy={self.Iyy} ")
 
         if tipo == "[]":
+            xls = open_on_tab(tab, 3)
             Nregistros = len(xls["A"])-2
             for i_fila in range(Nregistros):
                 

@@ -11,7 +11,9 @@ import sys
 ret = Reticulado()
 
 
-nombre_archivo = "05_ejemplo_chequear_diseño.h5"
+# nombre_archivo = "g06_4063_1540840_Grupo_06.h5"
+#nombre_archivo = "g07_2725_1540552_05_ejemplo_chequear_diseño.h5"
+nombre_archivo = "Bonus_G8.h5"
 
 if len(sys.argv) > 1:
 	nombre_archivo = sys.argv[1]
@@ -25,12 +27,14 @@ ret.abrir(nombre_archivo)
 
 opciones_nodos = {
 	"ver_cargas": True,
+	"ver_numeros_de_nodos": False,
 }
 
 #Visualizar y comprobar las secciones
 opciones_barras = {
 	# "ver_secciones_en_barras": True,
 	"color_barras_por_seccion": True,
+	"ver_numeros_de_barras" : False,
 }
 ver_reticulado_3d(ret,opciones_nodos=opciones_nodos,opciones_barras=opciones_barras)
 

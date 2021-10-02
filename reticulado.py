@@ -331,7 +331,11 @@ class Reticulado(object):
             ni = barras[i,0]
             nj = barras[i,1]
 
-            den = secciones[i][0]
+            den = str(secciones[i])
+
+            if den[0] == "[" and den[-1] == "]":
+                den = den[1:-1]
+
 
             if not den in dict_secciones:
                 dict_secciones[den] = SeccionICHA(den)
