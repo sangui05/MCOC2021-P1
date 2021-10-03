@@ -1,5 +1,5 @@
 import numpy as np
-from constantes import g_, ρ_acero, E_acero
+from constantes import g_, ρ_acero, E_acero, σy_acero
 
 
 class Barra(object):
@@ -11,7 +11,7 @@ class Barra(object):
         self.nj = nj
         self.seccion = seccion
         self.color   = color
-    
+
 
     def obtener_conectividad(self):
         return [self.ni, self.nj]
@@ -31,15 +31,19 @@ class Barra(object):
         return np.sqrt(np.dot(dij,dij))
 
     def calcular_peso(self, reticulado):
-        
+
+
         L = self.calcular_largo(reticulado)
         Peso = self.seccion.peso()
-        print(Peso)
+
+        
         return Peso * L
+
 
 
     def obtener_rigidez(self, ret):
         A = self.calcular_area()
+        
         L = self.calcular_largo(ret)
 
         xi = ret.obtener_coordenada_nodal(self.ni)
@@ -53,11 +57,11 @@ class Barra(object):
 
         return E_acero * A / L * (Tθ @ Tθ.T )
 
-    def obtener_vector_de_cargas(self, ret):
+    def obtener_vector_de_cargas(self, ret, factor_peso_propio=[0., 0., 0.]):
         
         W = self.calcular_peso(ret)
 
-        return np.array([0, 0, -W, 0, 0, -W])
+        return np.array([factor_peso_propio[0], factor_peso_propio[1], factor_peso_propio[2], factor_peso_propio[0], factor_peso_propio[1], factor_peso_propio[2]])*W/2
 
 
     def obtener_fuerza(self, ret):
@@ -79,23 +83,23 @@ class Barra(object):
 
         return E_acero * A / L * (Tθ.T @ ue)
 
+     
+    
+    def chequear_diseño(self, Fu, ret, ϕ=0.9, silence=False):
 
-
-    def chequear_diseño(self, Fu, ret, ϕ=0.9):
-        
-        """Implementar"""   
         area = self.seccion.area()
         peso = self.seccion.peso()
         inercia_xx = self.seccion.inercia_xx()
         inercia_yy = self.seccion.inercia_yy()
         nombre = self.seccion.nombre()
-        
+
         #Resistencia nominal
         Fn = area * σy_acero
 
         #Revisar resistencia nominal
         if abs(Fu) > ϕ*Fn:
-            print(f"Resistencia nominal Fu = {Fu} ϕ*Fn = {ϕ*Fn}")
+            if not silence:
+                print(f"Resistencia nominal Fu = {Fu} ϕ*Fn = {ϕ*Fn}")
             return False
 
         L = self.calcular_largo(ret)
@@ -106,34 +110,34 @@ class Barra(object):
 
         #Revisar radio de giro
         if Fu >= 0 and L/i > 300:
-            print(f"Esbeltez Fu = {Fu} L/i = {L/i}")
+            if not silence:
+                print(f"Esbeltez Fu = {Fu} L/i = {L/i}")
             return False
 
         #Revisar carga critica de pandeo
         if Fu < 0:  #solo en traccion
             Pcr = np.pi**2*E_acero*I / L**2
             if abs(Fu) > Pcr:
-                print(f"Pandeo Fu = {Fu} Pcr = {Pcr}")
+                if not silence:
+                    print(f"Pandeo Fu = {Fu} Pcr = {Pcr}")
                 return False
-        
-        """Implementar"""   
+
         #Si pasa todas las pruebas, estamos bien
         return True
-        
+
+    def obtener_factor_utilizacion(self, Fu, ϕ=0.9):
+            A = self.seccion.area()
+            Fn = A * σy_acero
+    
+            return abs(Fu) / (ϕ*Fn)
 
 
     def rediseñar(self, Fu, ret, ϕ=0.9):
-        
-        """Implementar"""   
-        
-
-
-
-
-    def obtener_factor_utilizacion(self, Fu, ϕ=0.9):
-        A = self.seccion.area()
-        Fn = A * σy_acero
-
-        return abs(Fu) / (ϕ*Fn)
-
-
+        """Para la fuerza Fu (proveniente de una combinacion de cargas)
+        re-calcular el radio y el espesor de la barra de modo que
+        se cumplan las disposiciones de diseño lo más cerca posible
+        a FU = 1.0.
+        """
+        self.R = 0.9*self.R   #cambiar y poner logica de diseño
+        self.t = 0.9*self.t   #cambiar y poner logica de diseño
+        return None

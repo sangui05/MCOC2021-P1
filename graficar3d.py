@@ -1,14 +1,3 @@
-# MCOC2020 - Proyecto 2
-# ==========================================================
-# ver_reticulado_2d
-#
-# Funciones sencillas para visualizar reticulados en 2d. 
-#
-# 2020 - www.joseabell.com 
-# Facultad de Ingeniería y Ciencias Aplicadas
-# Universidad de los Andes
-# ==========================================================
-
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.pyplot as plt
@@ -24,6 +13,7 @@ opc_nodos_default = {
     "usar_posicion_deformada": False,
     "factor_amplificacion_deformada": 1.,
     "datos_desplazamientos_nodales": None,
+    "ver_cargas": False
 }
 
 #Opciones para nodos
@@ -78,6 +68,24 @@ def graficar_nodos(ret, fig, opciones):
     if opciones["ver_numeros_de_nodos"]:
         for n in range(xyz.shape[0]):
             ax.text(xyz[n,0], xyz[n,1], xyz[n,2], f"{n}", color=opciones['color_nodos'])
+
+
+    if opciones["ver_cargas"]:
+        x = []
+        y = []
+        z = []
+        lx = []
+        ly = []
+        lz = []
+        for node in ret.cargas:
+            for gdl, val in ret.cargas[node]:
+                x.append(ret.xyz[node, 0])
+                y.append(ret.xyz[node, 1])
+                z.append(ret.xyz[node, 2])
+                lx.append((gdl == 0 ) * val)
+                ly.append((gdl == 1 ) * val)
+                lz.append((gdl == 2 ) * val)
+        ax.quiver(x,y,z,lx,ly,lz,normalize=True)
 
 
 def graficar_barras(ret, fig, opciones):
@@ -226,4 +234,5 @@ def ver_reticulado_3d(ret, fig=1,
     plt.title(titulo)
 
     if llamar_show:
+        plt.show()
         plt.show()

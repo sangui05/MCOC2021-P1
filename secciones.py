@@ -1,8 +1,6 @@
 from numpy import pi, sqrt, nan
 from numpy.random import rand
 from constantes import g_, ρ_acero, mm_
-import pandas as pd
-
  
 class Circular(object):
     """define una seccion Circular"""
@@ -35,227 +33,147 @@ class Circular(object):
         
 #Mas adelante, no es para P1E1
 
+from pandas import read_excel
+
 class SeccionICHA(object):
     """Lee la tabla ICHA y genera una seccion apropiada"""
 
     def __init__(self, denominacion, base_datos="Perfiles ICHA.xlsx", debug=False, color=rand(3)):
         super(SeccionICHA, self).__init__()
-        self.denominacion = denominacion
+        denominacion = denominacion.replace("×","x").replace("'","")
+        self.denominacion = denominacion.replace("×","x").replace("'","")
         self.color = color  #color para la seccion
 
-    
+        print(f"Buscando {denominacion} en base_datos = {base_datos}")
+
+        if denominacion[0:2] == "HR" or denominacion[0] == "W":
+            tab = "HR"
+            tipo = "HR"
+        elif denominacion[0] == "H":
+            tab = "H"
+            tipo = "H"
+        elif denominacion[0:2] == "[]" or denominacion[0:2] == "[]":
+            tab = "Cajon"
+            tipo = "[]"
+        elif denominacion[0] == "o":
+            tab = "Circulares Menores"
+            tipo = "o"
+        elif denominacion[0] == "O":
+            tab = "Circulares Mayores"
+            tipo = "O"
+        else:
+            print(f"Tipo de seccion {denominacion[0:2]} no soportada. Intentar H, HR, [], o u O")
+            self.invalid_section()
+
+        found = False
+
+        print(f"  Abriendo tab = {tab}")
+
+        def open_on_tab(tab, header):
+            xls = read_excel(base_datos,
+            engine="openpyxl",
+            sheet_name=tab,
+            header=header)
+            if debug:
+                print("======xls=======")
+                print(xls)
+                print("======xls=======")
+
+            return xls
 
 
+
+        if tipo == "H" or tipo == "HR":
+            xls = open_on_tab(tab, 11)
+            Nregistros = len(xls["A"])-2
+            for i_fila in range(Nregistros):
+                
+                df = xls.loc[i_fila+2,["d","bf","peso","A","Ix/10⁶","Iy/10⁶",]]
+                if debug:
+                    print("======df=======")
+                    print(df)
+                    print("======df=======")
+
+                if df.isnull().values.any():
+                    #Saltarse valores inexistentes
+                    continue
+
+                d = df["d"]
+                bf = df["bf"]
+                w = df["peso"]
+                den = f'{tipo}{d}x{bf}x{w}'
+
+                if den == self.denominacion:
+                    found = True
+                    self.d = df["d"]
+                    self.bf = df["bf"]
+                    self.w = df["peso"]
+                    self.A = df["A"]*mm_**2
+                    self.Ixx = df["Ix/10⁶"]*1e6**mm_**4
+                    self.Iyy = df["Iy/10⁶"]*1e6**mm_**4
+                    # self.denominacion = denominacion
+                    print(f"{den} encontrada. A={self.A} Ix={self.Ixx} Iy={self.Iyy} ")
+
+        if tipo == "[]":
+            xls = open_on_tab(tab, 3)
+            Nregistros = len(xls["A"])-2
+            for i_fila in range(Nregistros):
+                
+                df = xls.loc[i_fila+2,["D","B","peso","A","Ix/10⁶","Iy/10⁶",]]
+                if debug:
+                    print("======df=======")
+                    print(df)
+                    print("======df=======")
+
+                if df.isnull().values.any():
+                    #Saltarse valores inexistentes
+                    continue
+
+                D = df["D"]
+                B = df["B"]
+                W = df["peso"]
+                den = f'{tipo}{D}x{B}x{W}'
+
+                if den == self.denominacion:
+                    found = True
+                    self.D = df["D"]
+                    self.B = df["B"]
+                    self.w = df["peso"]
+                    self.A = df["A"]*mm_**2
+                    self.Ixx = df["Ix/10⁶"]*1e6**mm_**4
+                    self.Iyy = df["Iy/10⁶"]*1e6**mm_**4
+                    # self.denominacion = denominacion
+                    print(f"{den} encontrada. A={self.A} Ix={self.Ixx} Iy={self.Iyy} ")
+
+        if not found:
+            print(f"Tipo de seccion {denominacion} no encontrada en base de datos")
+            self.invalid_section()
+        
     def area(self):
-        
-
-        palabras=[]
-        palabra=''
-        for i in self.denominacion:
-            
-            if i == 'H':
-                continue
-            elif i == 'R':
-                continue
-            elif i == '[':
-                continue
-            elif i == ']':
-                continue
-            elif i =='x':
-                palabras.append(float(palabra))
-                palabra=''
-
-            else:
-                palabra += i
-
-        palabras.append(palabra)
-        print(palabras)
-        datos=pd.read_excel('Perfiles ICHA.xlsx', sheet_name='HR',header=None)
-
-        for i in range(0,len(datos[5])):
-
-            if datos[5][i] == palabras[0]:
-                        
-                if datos[7][i]==palabras[1]:
-                            
-                    if datos[9][i]==float(palabras[2]):
-
-                        return datos[13][i]
-                        
-        datos1=pd.read_excel('Perfiles ICHA.xlsx', sheet_name='H',header=None) 
-
-        for i in range(0,len(datos1[1])):
-
-            if datos1[1][i] == palabras[0]:
-                       
-                if datos1[3][i] == palabras[1]:
-
-                    if datos1[5][i] ==  float(palabras[2]):
-                        
-                        return datos1[9][i]
-                        
-        datos2=pd.read_excel('Perfiles ICHA.xlsx', sheet_name='Cajon',header=None)   
-
-        for i in range(0,len(datos2[1])):
-
-            if datos2[1][i] == palabras[0]:
-
-                if datos2[3][i] == palabras[1]:
-                    
-
-                    if datos2[5][i] == float(palabras[2]):
-                        
-                        return datos2[8][i]
-
-        
+        return self.A
 
     def peso(self):
-        palabras=[]
-        palabra=''
-        for i in self.denominacion:
-            
-            if i == 'H':
-                continue
-            elif i == 'R':
-                continue
-            elif i == '[':
-                continue
-            elif i == ']':
-                continue
-            elif i =='x':
-                palabras.append(float(palabra))
-                palabra=''
-
-            else:
-                palabra += i
-
-        return(palabras[2])
-
+        return self.w
 
     def inercia_xx(self):
-        
+        return self.Ixx
 
-        palabras=[]
-        palabra=''
-        for i in self.denominacion:
-            
-            if i == 'H':
-                continue
-            elif i == 'R':
-                continue
-            elif i == '[':
-                continue
-            elif i == ']':
-                continue
-            elif i =='x':
-                palabras.append(float(palabra))
-                palabra=''
-
-            else:
-                palabra += i
-
-        palabras.append(palabra)
-        print(palabras)
-        
-        datos=pd.read_excel('Perfiles ICHA.xlsx', sheet_name='HR',header=None)
-
-        for i in range(0,len(datos[5])):
-
-            if datos[5][i] == palabras[0]:
-                        
-                if datos[7][i]==palabras[1]:
-                            
-                    if datos[9][i]==float(palabras[2]):
-                        
-                        return datos[13][i]
-                        
-        datos1=pd.read_excel('Perfiles ICHA.xlsx', sheet_name='H',header=None)    
-
-        for i in range(0,len(datos1[1])):
-
-            if datos1[1][i] == palabras[0]:
-                       
-                if datos1[3][i] == palabras[1]:
-
-                    if datos1[5][i] ==  float(palabras[2]):
-                        
-                        return datos1[9][i]
-                        
-        datos2=pd.read_excel('Perfiles ICHA.xlsx', sheet_name='Cajon',header=None) 
-
-        for i in range(0,len(datos2[1])):
-
-            if datos2[1][i] == palabras[0]:
-                
-                if datos2[3][i] == palabras[1]:
-                    
-
-                    if datos2[5][i] == float(palabras[2]):
-                        
-                        return datos2[9][i]
     def inercia_yy(self):
-        
+        return self.Iyy
 
-        palabras=[]
-        palabra=''
-        for i in self.denominacion:
-            
-            if i == 'H':
-                continue
-            elif i == 'R':
-                continue
-            elif i == '[':
-                continue
-            elif i == ']':
-                continue
-            elif i =='x':
-                palabras.append(float(palabra))
-                palabra=''
+    def invalid_section(self):
+        self.A = nan
+        self.peso = nan
+        self.Ixx = nan
+        self.Iyy = nan
 
-            else:
-                palabra += i
-
-        palabras.append(palabra)
-        print(palabras)
-        datos=pd.read_excel('Perfiles ICHA.xlsx', sheet_name='HR',header=None)
-
-        for i in range(0,len(datos[5])):
-
-            if datos[5][i] == palabras[0]:
-                        
-                if datos[7][i]==palabras[1]:
-                            
-                    if datos[9][i]==float(palabras[2]):
-                        
-                        return datos[13][i]
-                        
-        datos1=pd.read_excel('Perfiles ICHA.xlsx', sheet_name='H',header=None)
-
-        for i in range(0,len(datos1[1])):
-
-            if datos1[1][i] == palabras[0]:
-                       
-                if datos1[3][i] == palabras[1]:
-
-                    if datos1[5][i] ==  float(palabras[2]):
-                        
-                        return datos1[9][i]
-                        
-        datos2=pd.read_excel('Perfiles ICHA.xlsx', sheet_name='Cajon',header=None)    
-
-        for i in range(0,len(datos2[1])):
-
-            if datos2[1][i] == palabras[0]:
-                
-
-                if datos2[3][i] == palabras[1]:
-                    
-
-                    if datos2[5][i] == float(palabras[2]):
-        
-                        return datos2[12][i]
+    def nombre(self):
+        return self.denominacion
 
     def __str__(self):
-        
-
-        return f"Seccion ICHA {self.denominacion} \n Area:  {SeccionICHA.area(self)}\n Peso:  {SeccionICHA.peso(self)}\n Ixx:  {SeccionICHA.inercia_xx(self)}\n Iyy:  {SeccionICHA.inercia_yy(self)}"
+        s = f"Seccion ICHA {self.denominacion}\n"
+        s += f"  Area : {self.A}\n"
+        s += f"  peso : {self.peso}\n"
+        s += f"  Ixx  : {self.Ixx}\n"
+        s += f"  Iyy  : {self.Iyy}\n"
+        return s
