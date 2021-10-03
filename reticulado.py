@@ -10,13 +10,10 @@ import h5py as h5
 #bar = Barra()
 class Reticulado(object):
     """Define un reticulado"""
-    __NNodosInit__ = 100
+    __NNodosInit__ = 1
 
-    #constructor
     def __init__(self):
         super(Reticulado, self).__init__()
-
-        print("Constructor de Reticulado")
 
         self.xyz = np.zeros((Reticulado.__NNodosInit__,3), dtype=np.double)
         self.Nnodos = 0
@@ -25,12 +22,12 @@ class Reticulado(object):
         self.restricciones = {}
         self.Ndimensiones = 3
         self.has_solution = False
-        
 
 
 
 
     def agregar_nodo(self, x, y, z=0):
+
 
         #FUNCION AGREGAR NODO FUNCIONAL Y SIN PROBLEMAS
         """
@@ -55,13 +52,7 @@ class Reticulado(object):
 
         return 0
 
-    def obtener_coordenada_nodal(self, n):
-        #FUNCION FUNCIONAL Y FUNCIONANDO SIN PROBLEMAS, QUITAR """ INICIALES Y FINALES SI SE DESEA VERIFICAR SU FUNCIONALIDAD
-        """corn = self.xyz[n,:]
-
-
-        #print(f"la posicion del nodo {n} es en las cordenadas =  {corn}")
-        return corn"""
+    
         if n >= self.Nnodos:
             return 
         return self.xyz[n, :]
@@ -291,224 +282,6 @@ class Reticulado(object):
         return cumple
 
 
-    def __str__(self):
-        s = "nodos:\n"
-        for n in range(self.Nnodos):
-            s += f"  {n} : ( {self.xyz[n,0]}, {self.xyz[n,1]}, {self.xyz[n,2]}) \n "
-        s += "\n\n"
-
-        s += "barras:\n"
-        for i, b in enumerate(self.barras):
-            n = b.obtener_conectividad()
-            s += f" {i} : [ {n[0]} {n[1]} ] \n"
-        s += "\n\n"
-        
-        s += "restricciones:\n"
-        for nodo in self.restricciones:
-            s += f"{nodo} : {self.restricciones[nodo]}\n"
-        s += "\n\n"
-        
-        s += "cargas:\n"
-        for nodo in self.cargas:
-            s += f"{nodo} : {self.cargas[nodo]}\n"
-        s += "\n\n"
-
-        if self.has_solution:
-            s += "desplazamientos:\n"
-            if self.Ndimensiones == 2:
-                uvw = self.u.reshape((-1,2))
-                for n in range(self.Nnodos):
-                    s += f"  {n} : ( {uvw[n,0]}, {uvw[n,1]}) \n "
-            if self.Ndimensiones == 3:
-                uvw = self.u.reshape((-1,3))
-                for n in range(self.Nnodos):
-                    s += f"  {n} : ( {uvw[n,0]}, {uvw[n,1]}, {uvw[n,2]}) \n "
-        s += "\n\n"
-
-        if self.has_solution:
-            f = self.obtener_fuerzas()
-            s += "fuerzas:\n"
-            for b in range(len(self.barras)):
-                s += f"  {b} : {f[b]}\n"
-        s += "\n"
-        s += f"Ndimensiones = {self.Ndimensiones}"
-
-        return s
-
-
-
-    def guardar(self, nombre):
-        import h5py
-
-        fid = h5py.File(nombre, "w")
-
-        fid["xyz"] = self.xyz
-
-        Nbarras = len(self.barras)
-        barras = np.zeros((Nbarras,2), dtype=np.int32)
-        secciones = fid.create_dataset("secciones", shape=(Nbarras,1), dtype=h5py.string_dtype())
-
-        for i, b in enumerate(self.barras):
-            barras[i,0] = b.ni
-            barras[i,1] = b.nj
-            secciones[i] = b.seccion.nombre()
-
-        fid["barras"] = barras
-
-        data_rest = fid.create_dataset("restricciones", (1,2), maxshape=(None,2), dtype=np.int32)
-        data_rest_val = fid.create_dataset("restricciones_val", (1,), maxshape=(None,), dtype=np.double)
-        nr = 0
-        for nodo in  self.restricciones:
-            for gdl, val in self.restricciones[nodo]:
-                data_rest.resize((nr+1,2))
-                data_rest_val.resize((nr+1,))
-                data_rest[nr, 0] = nodo
-                data_rest[nr, 1] = gdl
-                data_rest_val[nr] = val
-                nr += 1
-
-
-        data_cargas = fid.create_dataset("cargas", (1,2), maxshape=(None,2), dtype=np.int32)
-        data_cargas_val = fid.create_dataset("cargas_val", (1,), maxshape=(None,), dtype=np.double)
-        nr = 0
-        for nodo in  self.cargas:
-            for gdl, val in self.cargas[nodo]:
-                data_cargas.resize((nr+1,2))
-                data_cargas_val.resize((nr+1,))
-                data_cargas[nr, 0] = nodo
-                data_cargas[nr, 1] = gdl
-                data_cargas_val[nr] = val
-                nr += 1
-
-
-    def abrir(self, nombre):
-        import h5py
-        from secciones import SeccionICHA
-        from barra import Barra
-
-        fid = h5py.File(nombre, "r")
-
-        xyz = fid["xyz"][:,:]
-
-        Nnodos = xyz.shape[0]
-
-        for i in range(Nnodos):
-            self.agregar_nodo(xyz[i,0], xyz[i,1], xyz[i,2])
-
-        barras = fid["barras"]
-        secciones = fid["secciones"]
-        cargas = fid["cargas"]
-        cargas_val = fid["cargas_val"]
-        restricciones = fid["restricciones"]
-        restricciones_val = fid["restricciones_val"]
-
-        Nbarras = fid["barras"].shape[0]
-
-        dict_secciones = {}
-
-        for i in range(Nbarras):
-            ni = barras[i,0]
-            nj = barras[i,1]
-
-            den = str(secciones[i])
-
-            if den[0] == "[" and den[-1] == "]":
-                den = den[1:-1]
-
-
-            if not den in dict_secciones:
-                dict_secciones[den] = SeccionICHA(den)
-
-            self.agregar_barra(Barra(ni,nj,dict_secciones[den]))
-            
-
-        for i in range(restricciones.shape[0]):
-            nodo = restricciones[i,0]
-            gdl = restricciones[i,1]
-            val = restricciones_val[i]
-
-            self.agregar_restriccion(nodo, gdl, val)
-
-        for i in range(cargas.shape[0]):
-            nodo = cargas[i,0]
-            gdl = cargas[i,1]
-            val = cargas_val[i]
-
-            self.agregar_fuerza(nodo, gdl, val)
-
-=======
-from scipy.linalg import solve
-from barra import Barra
-import numpy as np
-from scipy.linalg import solve
-from secciones import SeccionICHA
-from barra import Barra
-from matplotlib.pylab import *
-import h5py as h5
-#bar = Barra()
-class Reticulado(object):
-    """Define un reticulado"""
-    __NNodosInit__ = 100
-
-    #constructor
-    def __init__(self):
-        super(Reticulado, self).__init__()
-
-        print("Constructor de Reticulado")
-
-        self.xyz = np.zeros((Reticulado.__NNodosInit__,3), dtype=np.double)
-        self.Nnodos = 0
-        self.barras = []
-        self.cargas = {}
-        self.restricciones = {}
-
-
-
-
-    def agregar_nodo(self, x, y, z=0):
-
-
-
-        print(f"Quiero agregar un nodo en ({x} {y} {z})")
-        numero_de_nodo_actual = self.Nnodos
-
-        self.xyz[numero_de_nodo_actual,:] = [x, y, z]
-
-        self.Nnodos += 1
-
-        return 0
-
-    def agregar_barra(self, barra):
-
-        self.barras.append(barra)
-
-        return 0
-
-    def obtener_coordenada_nodal(self, n):
-
-        corn = self.xyz[n,:]
-
-
-        #print(f"la posicion del nodo {n} es en las cordenadas =  {corn}")
-        return corn
-    def calcular_peso_total(self):
-        pesototalbarras = 0
-        for barra in self.barras:
-            w_barra= barra.calcular_peso(self)
-            pesototalbarras+= w_barra
-
-        return pesototalbarras
-
-    def obtener_nodos(self):
-
-        return self.xyz
-
-    def obtener_barras(self):
-
-        return self.barras
-
-
-
     def agregar_restriccion(self, nodo, gdl, valor=0.0):
         print(f"Agregando una restriccion en: ({nodo} {gdl} {valor})")
 
@@ -636,41 +409,11 @@ class Reticulado(object):
 
 
 
-        def __str__(self):
-
-            s = "Soy un reticulado :) \n"
-
-            s += "Nodos: \n"
-
-            for i in range(self.Nnodos):
-                s += f"{i} : ({self.xyz[i][0]}, {self.xyz[i][1]}, {self.xyz[i][2]})\n"
-                i += 1
-
-            s += "Barras: \n"
-
-            h = 0
-            for i in self.barras:
-                s += f"{h} : [{self.barras[h].ni} {self.barras[h].nj}]\n"
-                h += 1
-
-            return s
+        
 
 
 
-
-    #constructor
-    def __init__(self):
-        super(Reticulado, self).__init__()
-
-        print("Constructor de Reticulado")
-
-        self.xyz = np.zeros((Reticulado.__NNodosInit__,3), dtype=np.double)
-        self.Nnodos = 0
-        self.barras = []
-        self.cargas = {}
-        self.restricciones = {}
-        """Implementar"""
-
+    
 
  #       for e in self.barras: #recore las barras #barras tiene [N°barra | ni | nj]
  #           ni = self.barras[1] 
@@ -708,179 +451,3 @@ class Reticulado(object):
            
            #self.K #matriz rigidez
            #self.u # grados de libertad
-
-
-    def agregar_nodo(self, x, y, z=0):
-
-        """Implementar"""
-
-        print(f"Quiero agregar un nodo en ({x} {y} {z})")
-        numero_de_nodo_actual = self.Nnodos
-
-        self.xyz[numero_de_nodo_actual,:] = [x, y, z]
-
-        self.Nnodos += 1
-
-        return 0
-
-    def agregar_barra(self, barra):
-        
-        self.barras.append(barra)        
-        
-        return 0
-
-    def obtener_coordenada_nodal(self, n):
-        
-        
-        return 0
-
-    def calcular_peso_total(self):
-        
-        """Implementar"""	
-        
-        return 0
-
-    def obtener_nodos(self):
-        
-        return self.xyz
-
-    def obtener_barras(self):
-        
-        return self.barras
-
-
-
-    def agregar_restriccion(self, nodo, gdl, valor=0.0):
-        
-        """Implementar"""	
-        
-        return 0
-
-    def agregar_fuerza(self, nodo, gdl, valor):
-        
-        """Implementar"""    
-        
-        return 0
-
-
-    def obtener_desplazamiento_nodal(self, n):
-        
-        """Implementar"""    
-        
-        return 0
-
-
-
-
-    def obtener_factores_de_utilizacion(self, f, ϕ=0.9):
-        
-        FU = np.zeros((len(self.barras)), dtype=np.double)
-        for i,b in enumerate(self.barras):
-            FU[i] = b.obtener_factor_utilizacion(f[i], ϕ)
-
-        return FU
-
-
-    def rediseñar(self, Fu, ϕ=0.9):
-        
-        """Implementar"""    
-        
-        return 0
-
-    def guardar(self, nombre):
-
-        dataset = h5.File(nombre, "w")
-
-        dataset["xyz"] = self.xyz
-
-        barras = np.zeros((len(self.barras), 2), dtype=np.int32)
-        for i, b in enumerate(self.barras):
-            barras[i, 0] = b.ni
-            barras[i, 1] = b.nj
-        dataset["barras"] = barras
-
-        secciones = np.zeros((len(self.barras), 1), dtype=h5.string_dtype())
-        for i, barr in enumerate(self.barras):
-            secciones[i] = barr.seccion.nombre()
-        dataset["secciones"] = secciones
-
-        c = 0
-        for nodo in self.restricciones:
-            for i in self.restricciones[nodo]:
-                c += 1
-
-        restricciones = np.zeros((c, 2), dtype=np.int32)
-
-        restricciones_val = np.zeros((c, 1), dtype=np.double)
-
-        c = 0
-        dataset.close()
-        for nodo in self.restricciones:
-
-            for i in self.restricciones[nodo]:
-                restricciones[c, 0] = nodo
-                restricciones[c, 1] = i[0]
-
-                restricciones_val[c, 0] = i[1]
-                c += 1
-
-        c = 0
-
-        for nodo in self.cargas:
-            for i in self.cargas[nodo]:
-                c += 1
-
-        cargas = np.zeros((c, 2), dtype=np.int32)
-
-        cargas_val = np.zeros((c, 1), dtype=np.double)
-
-        c = 0
-        for nodo in self.cargas:
-            for i in self.cargas[nodo]:
-                cargas[c, 0] = nodo
-                cargas[c, 1] = i[0]
-                cargas_val[c, 0] = i[1]
-            c += 1
-
-            return 0
-
-    def abrir(self, nombre):
-
-        up = h5.File(nombre, "r")
-        barras = up["barras"]
-        cargas = up["cargas"]
-        cargas_val = up["cargas_val"]
-        restricciones = up["restricciones"]
-        restricciones_val = up["restricciones_val"]
-        secciones = up["secciones"]
-        xyz = up["xyz"]
-
-        for i, barra in enumerate(barras):
-            self.agregar_barra(
-                Barra(np.int32(barra[0]), np.int32(barra[1]), SeccionICHA(secciones[i][0]), color=np.random.rand(3)))
-
-        for i, carga in enumerate(cargas):
-            self.agregar_fuerza(np.int32(carga[0]), np.float32(carga[1]), np.float32(cargas_val[i]))
-
-        for i in xyz:
-            self.agregar_nodo(i[0], i[1], i[2])
-
-        for i, r in enumerate(restricciones):
-            self.agregar_restriccion(np.int32(r[0]), np.int32(r[1]), np.int32(restricciones_val[i]))
-
-        up.close()
-
-        return 0
-
-
-
-    def chequear_diseño(self, Fu, ϕ=0.9):
-        cumple = True
-        for i,b in enumerate(self.barras):
-            if not b.chequear_diseño(Fu[i], self, ϕ):
-                print(f"----> Barra {i} no cumple algun criterio. ")
-                cumple = False
-        return cumple
-
-
-
