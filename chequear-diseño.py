@@ -13,7 +13,13 @@ ret = Reticulado()
 
 # nombre_archivo = "g06_4063_1540840_Grupo_06.h5"
 #nombre_archivo = "g07_2725_1540552_05_ejemplo_chequear_diseño.h5"
-nombre_archivo = "Bonus_G8.h5"
+# nombre_archivo = "Bonus_G8.h5"
+# nombre_archivo = "g00_704_1544595_Puente Grupo 0 bonus-2.h5" #PESO_TOTAL = 50090.6566633671 kg
+# nombre_archivo = "g05_2103_1544554_05_ejemplo_chequear_diseño.h5" #PESO_TOTAL = 667456.2596066704 kg
+# nombre_archivo = "g07_2725_1544495_05_ejemplo_chequear_diseño-2.h5" #PESO_TOTAL = 416646.9566412371 kg
+nombre_archivo = "g10_LATE_129_1544669_05_ejemplo_chequear_diseño.h5" #PESO_TOTAL = 101973.82745843157 kg
+
+
 
 if len(sys.argv) > 1:
 	nombre_archivo = sys.argv[1]

@@ -40,7 +40,8 @@ class SeccionICHA(object):
 
     def __init__(self, denominacion, base_datos="Perfiles ICHA.xlsx", debug=False, color=rand(3)):
         super(SeccionICHA, self).__init__()
-        self.denominacion = denominacion
+        denominacion = denominacion.replace("×","x").replace("'","")
+        self.denominacion = denominacion.replace("×","x").replace("'","")
         self.color = color  #color para la seccion
 
         print(f"Buscando {denominacion} en base_datos = {base_datos}")
@@ -51,7 +52,7 @@ class SeccionICHA(object):
         elif denominacion[0] == "H":
             tab = "H"
             tipo = "H"
-        elif denominacion[0:2] == "[]":
+        elif denominacion[0:2] == "[]" or denominacion[0:2] == "[]":
             tab = "Cajon"
             tipo = "[]"
         elif denominacion[0] == "o":
@@ -61,7 +62,7 @@ class SeccionICHA(object):
             tab = "Circulares Mayores"
             tipo = "O"
         else:
-            print(f"Tipo de seccion {denominacion} no soportada. Intentar H, HR, [], o u O")
+            print(f"Tipo de seccion {denominacion[0:2]} no soportada. Intentar H, HR, [], o u O")
             self.invalid_section()
 
         found = False
@@ -83,8 +84,8 @@ class SeccionICHA(object):
 
 
         if tipo == "H" or tipo == "HR":
-            Nregistros = len(xls["A"])-2
             xls = open_on_tab(tab, 11)
+            Nregistros = len(xls["A"])-2
             for i_fila in range(Nregistros):
                 
                 df = xls.loc[i_fila+2,["d","bf","peso","A","Ix/10⁶","Iy/10⁶",]]
